@@ -121,16 +121,20 @@
           <span class="nav-icon" data-icon="LayoutDashboard" data-icon-size="18"></span>
           <span>Dashboard</span>
         </button>
+        <button class="nav-item" data-view="pipeline">
+          <span class="nav-icon" data-icon="GitBranch" data-icon-size="18"></span>
+          <span>Pipeline Builder</span>
+        </button>
         <button class="nav-item" data-view="editor">
-          <span class="nav-icon" data-icon="PencilLine" data-icon-size="18"></span>
-          <span>Editor</span>
+          <span class="nav-icon" data-icon="Code" data-icon-size="18"></span>
+          <span>Transform Editor</span>
         </button>
         <button class="nav-item" data-view="database">
           <span class="nav-icon" data-icon="Database" data-icon-size="18"></span>
-          <span>Database</span>
+          <span>Database Explorer</span>
         </button>
         <button class="nav-item" data-view="reports">
-          <span class="nav-icon" data-icon="BarChart3" data-icon-size="18"></span>
+          <span class="nav-icon" data-icon="FileText" data-icon-size="18"></span>
           <span>Reports</span>
         </button>
       </nav>
@@ -201,16 +205,41 @@
         </div>
       </div>
 
-      <!-- Editor View -->
+      <!-- Pipeline Builder View -->
+      <div class="view" id="pipeline-view">
+        <div class="page-header">
+          <h1 class="page-title">Pipeline Builder</h1>
+        </div>
+
+        <div class="pipeline-view-header">
+          <input type="text" id="pipeline-search" class="form-input" placeholder="Search pipelines...">
+          <div class="pipeline-view-actions">
+            <button class="btn-secondary" id="pipeline-refresh-btn">
+              <span data-icon="RefreshCw" data-icon-size="16"></span>
+              Refresh
+            </button>
+            <button class="btn-primary" id="pipeline-new-btn">
+              <span data-icon="Plus" data-icon-size="16"></span>
+              New Pipeline
+            </button>
+          </div>
+        </div>
+
+        <div id="pipeline-list">
+          <!-- Pipeline cards rendered here -->
+        </div>
+      </div>
+
+      <!-- Transform Editor View -->
       <div class="view" id="editor-view">
         <div class="view-header">
-          <h1 class="view-title">Editor</h1>
-          <p class="view-subtitle">Code editor and file management</p>
+          <h1 class="view-title">Transform Editor</h1>
+          <p class="view-subtitle">Code editor for SQL and Python transformations</p>
         </div>
         <div class="empty-state">
-          <span data-icon="PencilLine" data-icon-size="48"></span>
-          <h3>Editor Coming Soon</h3>
-          <p>This page is under construction.</p>
+          <span data-icon="Code" data-icon-size="48"></span>
+          <h3>Transform Editor Coming in Phase 3</h3>
+          <p>SQL and Python editor with Monaco integration</p>
         </div>
       </div>
 

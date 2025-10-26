@@ -9,6 +9,9 @@ const { registerThemeHandlers } = require('./ipc/themes');
 const { registerReleaseNotesHandlers } = require('./ipc/release-notes');
 const { registerAppHandlers } = require('./ipc/app');
 const { registerNotificationHandlers } = require('./ipc/notifications');
+const { registerPipelineHandlers } = require('./ipc/pipeline');
+const { registerDatabaseHandlers } = require('./ipc/database');
+const { registerFileHandlers } = require('./ipc/files');
 
 /**
  * Initialize the application
@@ -22,6 +25,9 @@ function initialize() {
   registerReleaseNotesHandlers();
   registerAppHandlers();
   registerNotificationHandlers();
+  registerPipelineHandlers();
+  registerDatabaseHandlers();
+  registerFileHandlers();
 
   // Create the main window
   createWindow();

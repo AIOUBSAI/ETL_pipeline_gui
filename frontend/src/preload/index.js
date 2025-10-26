@@ -58,5 +58,59 @@ contextBridge.exposeInMainWorld('electronAPI', {
   removeNotificationListener: () => {
     ipcRenderer.removeAllListeners('notification');
   },
-  focusWindow: () => ipcRenderer.invoke('focus-window')
+  focusWindow: () => ipcRenderer.invoke('focus-window'),
+
+  // Pipeline APIs
+  pipeline: {
+    list: (directory) => ipcRenderer.invoke('pipeline:list', directory),
+    read: (path) => ipcRenderer.invoke('pipeline:read', path),
+    write: (path, content) => ipcRenderer.invoke('pipeline:write', path, content),
+    validate: (path) => ipcRenderer.invoke('pipeline:validate', path),
+    execute: (path, options) => ipcRenderer.invoke('pipeline:execute', path, options),
+    stop: (processId) => ipcRenderer.invoke('pipeline:stop', processId),
+    listReports: (reportsDir) => ipcRenderer.invoke('pipeline:list-reports', reportsDir),
+    readReport: (path) => ipcRenderer.invoke('pipeline:read-report', path),
+
+    // Event listeners for streaming output
+    onPipelineOutput: (callback) => {
+      ipcRenderer.on('pipeline:output', (event, data) => callback(data));
+    },
+    onPipelineComplete: (callback) => {
+      ipcRenderer.on('pipeline:complete', (event, data) => callback(data));
+    },
+    onPipelineError: (callback) => {
+      ipcRenderer.on('pipeline:error', (event, data) => callback(data));
+    },
+    removePipelineListeners: () => {
+      ipcRenderer.removeAllListeners('pipeline:output');
+      ipcRenderer.removeAllListeners('pipeline:complete');
+      ipcRenderer.removeAllListeners('pipeline:error');
+    }
+  },
+
+  // Database APIs
+  database: {
+    getSchema: (dbPath) => ipcRenderer.invoke('database:get-schema', dbPath),
+    query: (dbPath, sql, options) => ipcRenderer.invoke('database:query', dbPath, sql, options),
+    exportTable: (dbPath, tableName, format) =>
+      ipcRenderer.invoke('database:export-table', dbPath, tableName, format),
+    getTableInfo: (dbPath, tableName) =>
+      ipcRenderer.invoke('database:get-table-info', dbPath, tableName)
+  },
+
+  // File APIs
+  file: {
+    read: (path) => ipcRenderer.invoke('file:read', path),
+    write: (path, content) => ipcRenderer.invoke('file:write', path, content),
+    list: (directory, options) => ipcRenderer.invoke('file:list', directory, options),
+    delete: (path) => ipcRenderer.invoke('file:delete', path),
+    create: (path, content) => ipcRenderer.invoke('file:create', path, content),
+    rename: (oldPath, newPath) => ipcRenderer.invoke('file:rename', oldPath, newPath),
+    copy: (sourcePath, destPath) => ipcRenderer.invoke('file:copy', sourcePath, destPath),
+    exists: (path) => ipcRenderer.invoke('file:exists', path),
+    stats: (path) => ipcRenderer.invoke('file:stats', path),
+    selectDialog: (options) => ipcRenderer.invoke('file:select-dialog', options),
+    selectDirectory: (options) => ipcRenderer.invoke('file:select-directory', options),
+    saveDialog: (options) => ipcRenderer.invoke('file:save-dialog', options)
+  }
 });

@@ -14,6 +14,7 @@ import { initializeDialogs } from './components/dialog.js';
 import { initializeHelpMenu } from './components/help-menu.js';
 import { initializeDashboard } from './views/dashboard/index.js';
 import { loadProjects } from './views/dashboard/controls.js';
+import { initializePipelineView } from './views/pipeline/index.js';
 import { initializeSettingsDialog, loadSettings } from './dialogs/settings/index.js';
 import { initializeThemesDialog } from './dialogs/themes.js';
 import { initializePluginsDialog } from './dialogs/plugins.js';
@@ -60,6 +61,7 @@ async function initializeApp() {
 
     // Initialize views
     initializeDashboard();
+    initializePipelineView();
 
     // Initialize dialogs with theme loader (now async with template loading)
     await initializeSettingsDialog(themeLoader);

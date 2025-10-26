@@ -88,6 +88,21 @@ export async function initializeSettingsDialog(themeLoaderInstance) {
     });
   }
 
+  // Backend path selector
+  const selectBackendBtn = getById('dialog-select-backend-btn');
+  if (selectBackendBtn) {
+    selectBackendBtn.addEventListener('click', async () => {
+      const folder = await window.electronAPI.selectRootFolder();
+      if (folder) {
+        const dialogInput = getById('dialog-backend-path-input');
+        if (dialogInput) {
+          dialogInput.value = folder;
+        }
+        setNestedState('settings', 'etlBackendPath', folder);
+      }
+    });
+  }
+
   if (saveSettingsBtn) {
     saveSettingsBtn.addEventListener('click', async () => {
       await saveDialogSettings();
@@ -168,6 +183,7 @@ export async function loadSettings() {
 
     const dialogRootInput = getById('dialog-root-folder-input');
     const dialogEtlProjectInput = getById('dialog-etl-project-input');
+    const dialogBackendPathInput = getById('dialog-backend-path-input');
     const loginModeSelect = getById('login-mode-select');
     const adminUsernameInput = getById('admin-username-input');
     const adminPasswordInput = getById('admin-password-input');
@@ -179,6 +195,9 @@ export async function loadSettings() {
     }
     if (dialogEtlProjectInput) {
       dialogEtlProjectInput.value = state.settings.etlProjectPath || '';
+    }
+    if (dialogBackendPathInput) {
+      dialogBackendPathInput.value = state.settings.etlBackendPath || '';
     }
 
     // Load security settings
@@ -228,6 +247,7 @@ async function saveDialogSettings() {
   try {
     const dialogRootInput = getById('dialog-root-folder-input');
     const dialogEtlProjectInput = getById('dialog-etl-project-input');
+    const dialogBackendPathInput = getById('dialog-backend-path-input');
     const loginModeSelect = getById('login-mode-select');
     const adminUsernameInput = getById('admin-username-input');
     const adminPasswordInput = getById('admin-password-input');
@@ -237,6 +257,7 @@ async function saveDialogSettings() {
     const newSettings = {
       rootFolder: dialogRootInput?.value || '',
       etlProjectPath: dialogEtlProjectInput?.value || '',
+      etlBackendPath: dialogBackendPathInput?.value || '',
       loginMode: loginModeSelect?.value || 'user',
       credentials: {
         admin: {

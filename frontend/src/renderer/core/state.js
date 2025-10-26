@@ -20,8 +20,43 @@ export const state = {
     pythonPath: 'python',
     notificationsEnabled: true,
     soundEnabled: true,
-    soundVolume: 0.7
-  }
+    soundVolume: 0.7,
+    // Pipeline settings
+    etlBackendPath: '',
+    pipelineConfigPath: '',
+    databasePath: '',
+    transformsPath: '',
+    reportsPath: '',
+    defaultValidateBeforeRun: true,
+    autoRefreshInterval: 5000,
+    maxLogLines: 1000,
+    autoGenerateReports: true,
+    queryTimeout: 30000,
+    maxQueryResults: 10000,
+    enableReadOnlyMode: true
+  },
+
+  // Pipeline State
+  pipelines: [],
+  currentPipeline: null,
+  pipelineValidation: null,
+  pipelineExecutionStatus: null,
+
+  // Editor State
+  transformFiles: [],
+  currentFile: null,
+  unsavedChanges: false,
+
+  // Database State
+  databases: [],
+  currentDatabase: null,
+  schemas: [],
+  tables: [],
+  queryResults: null,
+
+  // Reports State
+  reports: [],
+  currentReport: null
 };
 
 // State change listeners

@@ -1,0 +1,385 @@
+/**
+ * Pipeline Builder Styles
+ */
+
+/* Pipeline List View */
+.pipeline-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.pipeline-view-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#pipeline-search {
+  min-width: 300px;
+}
+
+#pipeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Pipeline Card */
+.pipeline-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.pipeline-card:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-accent);
+}
+
+.pipeline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pipeline-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.pipeline-card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.pipeline-card:hover .pipeline-card-actions {
+  opacity: 1;
+}
+
+.pipeline-card-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.pipeline-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Pipeline Editor Dialog */
+.pipeline-editor-dialog .dialog-content {
+  max-width: 1200px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pipeline-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pipeline-editor-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.pipeline-editor-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.pipeline-editor-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pipeline-editor-sidebar {
+  width: 200px;
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+
+.pipeline-editor-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.pipeline-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-size: 14px;
+}
+
+.pipeline-nav-item:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.pipeline-nav-item.active {
+  background: var(--color-bg-tertiary);
+  border-left-color: var(--color-accent);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.pipeline-editor-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Editor Sections */
+.editor-section {
+  max-width: 800px;
+}
+
+.editor-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: var(--color-text-primary);
+}
+
+.editor-section h4 {
+  margin: 24px 0 12px 0;
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
+
+.editor-section h5 {
+  margin: 16px 0 12px 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.form-input.monospace {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* Variables Section */
+.variable-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.variable-row .variable-key {
+  flex: 1;
+}
+
+.variable-row .variable-value {
+  flex: 2;
+}
+
+.variable-row .variable-remove {
+  flex-shrink: 0;
+}
+
+/* Jobs Section */
+#jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-card {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.job-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.job-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.job-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.job-card-body {
+  font-size: 13px;
+}
+
+.job-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.job-depends {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+/* Job Editor Dialog */
+.job-editor-dialog .dialog-content {
+  max-width: 700px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.job-editor-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.job-editor-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+#dependencies-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.processors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.processors-list .checkbox-label {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.processors-list .checkbox-label:hover {
+  background: var(--color-bg-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pipeline-editor-dialog .dialog-content {
+    max-width: 100%;
+    height: 100vh;
+  }
+
+  .pipeline-editor-body {
+    flex-direction: column;
+  }
+
+  .pipeline-editor-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .pipeline-editor-nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+}

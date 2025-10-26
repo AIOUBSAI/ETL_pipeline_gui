@@ -9,7 +9,7 @@ import { openDialog } from './dialog.js';
 import { initializeIcons } from '../utils/icons.js';
 
 // Define which views require admin access
-const PROTECTED_VIEWS = ['editor', 'database', 'reports'];
+const PROTECTED_VIEWS = ['pipeline', 'editor', 'database', 'reports'];
 
 /**
  * Initialize sidebar toggle
