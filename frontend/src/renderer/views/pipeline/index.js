@@ -6,6 +6,7 @@
 import { state, setState, getState, subscribe } from '../../core/state.js';
 import { initializeIcons } from '../../utils/icons.js';
 import { showToast } from '../../components/toast.js';
+import { showConfirm } from '../../components/confirm.js';
 import { handleError, withErrorHandling } from '../../utils/error-handler.js';
 import { openPipelineEditor } from './editor.js';
 
@@ -168,11 +169,17 @@ async function handlePipelineActions(e) {
  */
 async function createNewPipeline() {
   const settings = await window.electronAPI.getSettings();
-  const directory = settings.pipelineConfigPath || settings.etlBackendPath;
+  let directory = settings.pipelineConfigPath || settings.etlBackendPath;
 
   if (!directory) {
     showToast('Pipeline directory not configured. Please set it in Settings.', 'error');
     return;
+  }
+
+  // If directory is the backend path, append 'schema' subdirectory
+  // This ensures pipelines are created in backend/schema folder
+  if (directory === settings.etlBackendPath) {
+    directory = `${directory}/schema`;
   }
 
   // Create a default pipeline template
@@ -296,8 +303,14 @@ async function executePipeline(path) {
 async function deletePipeline(path) {
   const pipelineName = path.split(/[/\\]/).pop();
 
-  const confirmed = confirm(
-    `Are you sure you want to delete "${pipelineName}"?\n\nThis action cannot be undone.`
+  const confirmed = await showConfirm(
+    `Are you sure you want to delete "${pipelineName}"? This action cannot be undone.`,
+    {
+      title: 'Delete Pipeline',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'error'
+    }
   );
 
   if (!confirmed) return;

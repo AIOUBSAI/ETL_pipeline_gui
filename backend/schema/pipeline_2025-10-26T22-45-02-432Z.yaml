@@ -1,0 +1,26 @@
+pipeline:
+  name: "New Pipeline"
+  version: "1.0"
+  description: "Created on 26/10/2025, 23:45:02"
+
+variables:
+  DATA_DIR: "data"
+  OUTPUT_DIR: "out/exports"
+
+databases:
+  warehouse:
+    type: duckdb
+    path: "out/db/warehouse.duckdb"
+    reset_on_start: false
+    schemas:
+      - landing
+      - staging
+      - analytics
+
+stages:
+  - extract
+  - stage
+  - transform
+  - export
+
+jobs: {}

@@ -61,7 +61,11 @@ function registerPipelineHandlers() {
         entries.forEach(entry => {
           const fullPath = path.join(dir, entry.name);
 
-          if (entry.isFile() && (entry.name === 'pipeline.yaml' || entry.name.endsWith('_pipeline.yaml'))) {
+          if (entry.isFile() && (
+            entry.name === 'pipeline.yaml' ||
+            entry.name.endsWith('_pipeline.yaml') ||
+            entry.name.startsWith('pipeline_')
+          ) && entry.name.endsWith('.yaml')) {
             const stats = fs.statSync(fullPath);
             pipelines.push({
               name: entry.name,
