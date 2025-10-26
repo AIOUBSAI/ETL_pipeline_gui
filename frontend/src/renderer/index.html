@@ -211,22 +211,21 @@
           <h1 class="page-title">Pipeline Builder</h1>
         </div>
 
-        <div class="pipeline-view-header">
-          <input type="text" id="pipeline-search" class="form-input" placeholder="Search pipelines...">
-          <div class="pipeline-view-actions">
-            <button class="btn-secondary" id="pipeline-refresh-btn">
-              <span data-icon="RefreshCw" data-icon-size="16"></span>
-              Refresh
-            </button>
-            <button class="btn-primary" id="pipeline-new-btn">
-              <span data-icon="Plus" data-icon-size="16"></span>
-              New Pipeline
-            </button>
+        <div class="projects-toolbar">
+          <div class="search-box">
+            <span class="search-icon" data-icon="Search" data-icon-size="16"></span>
+            <input type="text" id="pipeline-search" placeholder="Search pipelines...">
           </div>
+          <button class="icon-btn" id="pipeline-refresh-btn" title="Refresh" data-icon="RefreshCw" data-icon-size="16">
+          </button>
+          <button class="icon-btn" id="pipeline-new-btn" title="New Pipeline" data-icon="Plus" data-icon-size="16">
+          </button>
         </div>
 
-        <div id="pipeline-list">
-          <!-- Pipeline cards rendered here -->
+        <div class="projects-container">
+          <div id="pipeline-list">
+            <!-- Pipeline cards rendered here -->
+          </div>
         </div>
       </div>
 

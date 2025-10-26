@@ -2,24 +2,48 @@
  * Pipeline Builder Styles
  */
 
+/* Pipeline View Layout */
+#pipeline-view .page-header {
+  padding: 24px 32px 16px 32px;
+  background-color: var(--ctp-base);
+}
+
+#pipeline-view .page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 0;
+}
+
+/* Toolbar area background and alignment */
+#pipeline-view .projects-toolbar {
+  background-color: var(--ctp-base);
+  padding: 0 32px 24px 32px;
+}
+
+/* Override search box background for pipeline view */
+#pipeline-view .search-box input {
+  background-color: var(--ctp-base);
+  border: 1px solid var(--ctp-surface1);
+}
+
+#pipeline-view .search-box input:focus {
+  background-color: var(--ctp-base);
+  border-color: var(--ctp-mauve);
+}
+
+/* Icon buttons in toolbar */
+#pipeline-view .projects-toolbar .icon-btn {
+  background-color: var(--ctp-base);
+  border: 1px solid var(--ctp-surface1);
+}
+
+#pipeline-view .projects-toolbar .icon-btn:hover:not(:disabled) {
+  background-color: var(--ctp-surface0);
+  border-color: var(--ctp-mauve);
+}
+
 /* Pipeline List View */
-.pipeline-view-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.pipeline-view-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-#pipeline-search {
-  min-width: 300px;
-}
-
 #pipeline-list {
   display: flex;
   flex-direction: column;
@@ -28,17 +52,34 @@
 
 /* Pipeline Card */
 .pipeline-card {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  padding: 16px 20px;
   transition: all 0.2s ease;
-  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.pipeline-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ctp-mauve), var(--ctp-blue));
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .pipeline-card:hover {
-  background: var(--color-bg-hover);
-  border-color: var(--color-accent);
+  border-color: var(--ctp-mauve);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px var(--ctp-black-30);
+}
+
+.pipeline-card:hover::before {
+  opacity: 1;
 }
 
 .pipeline-card-header {
@@ -53,12 +94,20 @@
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 16px;
+  color: var(--ctp-text);
+}
+
+.pipeline-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pipeline-card-actions {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -67,17 +116,22 @@
   opacity: 1;
 }
 
+.pipeline-card-actions .icon-btn {
+  width: 28px;
+  height: 28px;
+}
+
 .pipeline-card-meta {
   display: flex;
   gap: 16px;
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--ctp-subtext0);
 }
 
 .pipeline-meta-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 /* Pipeline Editor Dialog */

@@ -110,10 +110,10 @@ function createPipelineCard(pipeline) {
         </div>
         <div class="pipeline-card-actions">
           <button class="icon-btn" data-action="validate" data-path="${pipeline.path}" title="Validate">
-            <span data-icon="CheckCircle" data-icon-size="14"></span>
+            <span data-icon="CheckCircle2" data-icon-size="14"></span>
           </button>
           <button class="icon-btn" data-action="edit" data-path="${pipeline.path}" title="Edit">
-            <span data-icon="Edit" data-icon-size="14"></span>
+            <span data-icon="PencilLine" data-icon-size="14"></span>
           </button>
           <button class="icon-btn" data-action="execute" data-path="${pipeline.path}" title="Run">
             <span data-icon="Play" data-icon-size="14"></span>
