@@ -1,0 +1,13 @@
+# Customer data source extraction
+extract_customers:
+  stage: extract
+  runner: csv_reader
+  depends_on: []
+  input:
+    path: "{DATA_DIR}"
+    files: "customers.csv"
+  processors:
+    - normalize_headers
+    - drop_empty_rows
+  output:
+    table: customers

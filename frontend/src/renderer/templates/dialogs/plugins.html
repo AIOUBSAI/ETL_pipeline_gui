@@ -1,0 +1,102 @@
+<!-- Plugins Dialog -->
+<div class="dialog-overlay" id="dialog-plugins">
+  <div class="dialog dialog-xlarge settings-dialog">
+    <!-- Close button at top-right -->
+    <button class="settings-dialog-close" data-close="plugins" data-icon="X" data-icon-size="20">
+    </button>
+
+    <div class="settings-layout">
+      <!-- Plugins Sidebar -->
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-header">
+          <h2 class="settings-main-title">Plugins</h2>
+        </div>
+        <nav class="settings-nav">
+          <button class="settings-nav-item active" data-plugin-tab="themes">
+            <span data-icon="Palette" data-icon-size="18"></span>
+            <span>Theme Plugins</span>
+          </button>
+          <button class="settings-nav-item" data-plugin-tab="scripts">
+            <span data-icon="Code2" data-icon-size="18"></span>
+            <span>Script Plugins</span>
+          </button>
+          <button class="settings-nav-item" data-plugin-tab="extensions">
+            <span data-icon="Package" data-icon-size="18"></span>
+            <span>Extensions</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Plugins Content -->
+      <main class="settings-content">
+        <!-- Theme Plugins Tab -->
+        <div class="settings-tab active" id="plugin-tab-themes">
+          <h2 class="settings-content-title">Theme Plugins</h2>
+          <p class="settings-group-desc" style="margin-bottom: 24px;">Import custom CSS theme files or create new themes using the visual editor.</p>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Import Custom Theme</h3>
+              <p class="settings-group-desc">Upload a CSS theme file that follows our theme template structure</p>
+            </div>
+            <div class="settings-row">
+              <input type="text" id="theme-file-path" class="input-text input-text-compact" placeholder="No file selected" readonly />
+              <button class="btn btn-secondary btn-compact" id="select-theme-file-btn">
+                <span data-icon="Upload" data-icon-size="16"></span>
+                <span>Browse</span>
+              </button>
+              <button class="btn btn-primary btn-compact" id="import-theme-btn" disabled>
+                <span data-icon="Upload" data-icon-size="16"></span>
+                <span>Import Theme</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Download Theme Template</h3>
+              <p class="settings-group-desc">Download a pre-configured template to create your own theme</p>
+            </div>
+            <div class="settings-row">
+              <button class="btn btn-secondary btn-compact" id="download-template-btn">
+                <span data-icon="Download" data-icon-size="16"></span>
+                <span>Download Template</span>
+              </button>
+              <a href="#" class="settings-link-inline" id="view-docs-link" style="margin-left: 12px;">View template documentation</a>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Installed Custom Themes</h3>
+              <p class="settings-group-desc">Custom themes you've imported</p>
+            </div>
+            <div id="custom-themes-list" class="custom-themes-list">
+              <div class="empty-state-small" style="padding: 24px;">
+                <span data-icon="Moon" data-icon-size="32"></span>
+                <p>No custom themes installed yet</p>
+                <small>Import a theme file to get started</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Script Plugins Tab -->
+        <div class="settings-tab" id="plugin-tab-scripts">
+          <h2 class="settings-content-title">Script Plugins</h2>
+          <div class="settings-group">
+            <p class="settings-group-desc">Script plugin functionality will be available here.</p>
+          </div>
+        </div>
+
+        <!-- Extensions Tab -->
+        <div class="settings-tab" id="plugin-tab-extensions">
+          <h2 class="settings-content-title">Extensions</h2>
+          <div class="settings-group">
+            <p class="settings-group-desc">Extension management will be available here.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

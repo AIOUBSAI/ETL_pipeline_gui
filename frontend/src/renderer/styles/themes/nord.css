@@ -1,0 +1,63 @@
+/* Nord Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #bf616a;
+  --ctp-flamingo: #d08770;
+  --ctp-pink: #bf616a;
+  --ctp-mauve: #b48ead;
+  --ctp-red: #bf616a;
+  --ctp-maroon: #bf616a;
+  --ctp-peach: #d08770;
+  --ctp-yellow: #ebcb8b;
+  --ctp-green: #a3be8c;
+  --ctp-teal: #8fbcbb;
+  --ctp-sky: #88c0d0;
+  --ctp-sapphire: #81a1c1;
+  --ctp-blue: #5e81ac;
+  --ctp-lavender: #b48ead;
+
+  /* Text Colors */
+  --ctp-text: #eceff4;
+  --ctp-subtext1: #e5e9f0;
+  --ctp-subtext0: #d8dee9;
+  --ctp-overlay2: #b8c0d0;
+  --ctp-overlay1: #9099ab;
+  --ctp-overlay0: #7b88a1;
+  --ctp-surface2: #5a657d;
+  --ctp-surface1: #4c566a;
+  --ctp-surface0: #434c5e;
+
+  /* Background Colors */
+  --ctp-base: #2e3440;
+  --ctp-mantle: #3b4252;
+  --ctp-crust: #2e3440;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #eff1f5;
+  --ctp-light-mantle: #e6e9ef;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(236, 239, 244, 0.08);
+  --ctp-white-05: rgba(236, 239, 244, 0.05);
+  --ctp-white-03: rgba(236, 239, 244, 0.03);
+  --ctp-white-10: rgba(236, 239, 244, 0.1);
+
+  --ctp-mauve-15: rgba(180, 142, 173, 0.15);
+  --ctp-mauve-10: rgba(180, 142, 173, 0.1);
+
+  --ctp-red-20: rgba(191, 97, 106, 0.2);
+  --ctp-red-15: rgba(191, 97, 106, 0.15);
+  --ctp-red-25: rgba(191, 97, 106, 0.25);
+
+  --ctp-green-10: rgba(163, 190, 140, 0.1);
+  --ctp-green-15: rgba(163, 190, 140, 0.15);
+  --ctp-green-25: rgba(163, 190, 140, 0.25);
+
+  --ctp-blue-15: rgba(94, 129, 172, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

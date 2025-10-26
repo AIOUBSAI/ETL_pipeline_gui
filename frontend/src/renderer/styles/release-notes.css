@@ -1,0 +1,256 @@
+/* Release Notes Dialog */
+.release-notes-dialog {
+  display: flex;
+  flex-direction: column;
+  width: 95vw;
+  max-width: 95vw;
+  height: 90vh;
+  max-height: 90vh;
+}
+
+.release-notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  /*border-bottom: 1px solid var(--ctp-surface1);*/
+  border-bottom: none;
+  flex-shrink: 0;
+}
+
+.release-notes-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 0;
+}
+
+.release-notes-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: var(--ctp-subtext0);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.release-notes-close:hover {
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-text);
+}
+
+.release-notes-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.release-notes-loading,
+.release-notes-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 64px 32px;
+  color: var(--ctp-subtext0);
+}
+
+.release-notes-loading .spinner {
+}
+
+.release-notes-loading p {
+}
+
+.release-notes-error {
+  color: var(--ctp-red);
+}
+
+.release-notes-error h3 {
+  font-size: 18px;
+  margin: 0;
+  color: var(--ctp-text);
+}
+
+.release-notes-error p {
+  font-size: 14px;
+  margin: 0;
+  color: var(--ctp-subtext1);
+}
+
+/* Markdown Content Styles */
+.markdown-content {
+  max-width: 900px;
+  margin: 0 auto;
+  color: var(--ctp-text);
+  line-height: 1.7;
+}
+
+.markdown-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ctp-text);
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ctp-surface1);
+}
+
+.markdown-content h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 32px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ctp-surface1);
+}
+
+.markdown-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 24px 0 12px 0;
+}
+
+.markdown-content h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ctp-mauve);
+  margin: 20px 0 10px 0;
+}
+
+.markdown-content p {
+  margin: 12px 0;
+  color: var(--ctp-text);
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.markdown-content li {
+  margin: 6px 0;
+  color: var(--ctp-text);
+}
+
+.markdown-content code {
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-mauve);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.markdown-content pre {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.markdown-content pre code {
+  background: none;
+  padding: 0;
+  color: var(--ctp-text);
+  font-size: 13px;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--ctp-mauve);
+  padding-left: 16px;
+  margin: 16px 0;
+  color: var(--ctp-subtext1);
+  font-style: italic;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid var(--ctp-surface1);
+  margin: 32px 0;
+}
+
+.markdown-content a {
+  color: var(--ctp-sapphire);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.markdown-content a:hover {
+  color: var(--ctp-blue);
+  text-decoration: underline;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+  color: var(--ctp-text);
+}
+
+.markdown-content em {
+  font-style: italic;
+  color: var(--ctp-subtext1);
+}
+
+/* Mermaid Diagrams */
+.mermaid-diagram {
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-error {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-red);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.mermaid-error p {
+  color: var(--ctp-red);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.mermaid-error pre {
+  background-color: var(--ctp-mantle);
+  margin: 0;
+}
+
+/* Scrollbar for release notes content */
+.release-notes-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.release-notes-content::-webkit-scrollbar-track {
+  background: var(--ctp-base);
+}
+
+.release-notes-content::-webkit-scrollbar-thumb {
+  background: var(--ctp-surface2);
+  border-radius: 4px;
+}
+
+.release-notes-content::-webkit-scrollbar-thumb:hover {
+  background: var(--ctp-overlay0);
+}

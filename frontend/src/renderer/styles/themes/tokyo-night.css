@@ -1,0 +1,63 @@
+/* Tokyo Night Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #f7768e;
+  --ctp-flamingo: #ff9e64;
+  --ctp-pink: #bb9af7;
+  --ctp-mauve: #9d7cd8;
+  --ctp-red: #f7768e;
+  --ctp-maroon: #db4b4b;
+  --ctp-peach: #ff9e64;
+  --ctp-yellow: #e0af68;
+  --ctp-green: #9ece6a;
+  --ctp-teal: #73daca;
+  --ctp-sky: #7dcfff;
+  --ctp-sapphire: #2ac3de;
+  --ctp-blue: #7aa2f7;
+  --ctp-lavender: #bb9af7;
+
+  /* Text Colors */
+  --ctp-text: #c0caf5;
+  --ctp-subtext1: #a9b1d6;
+  --ctp-subtext0: #9aa5ce;
+  --ctp-overlay2: #787c99;
+  --ctp-overlay1: #6e7599;
+  --ctp-overlay0: #5a5f7d;
+  --ctp-surface2: #4a5069;
+  --ctp-surface1: #3b4261;
+  --ctp-surface0: #2f3549;
+
+  /* Background Colors */
+  --ctp-base: #1a1b26;
+  --ctp-mantle: #16161e;
+  --ctp-crust: #0f0f14;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #d5d6db;
+  --ctp-light-mantle: #cbccd1;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(192, 202, 245, 0.08);
+  --ctp-white-05: rgba(192, 202, 245, 0.05);
+  --ctp-white-03: rgba(192, 202, 245, 0.03);
+  --ctp-white-10: rgba(192, 202, 245, 0.1);
+
+  --ctp-mauve-15: rgba(157, 124, 216, 0.15);
+  --ctp-mauve-10: rgba(157, 124, 216, 0.1);
+
+  --ctp-red-20: rgba(247, 118, 142, 0.2);
+  --ctp-red-15: rgba(247, 118, 142, 0.15);
+  --ctp-red-25: rgba(247, 118, 142, 0.25);
+
+  --ctp-green-10: rgba(158, 206, 106, 0.1);
+  --ctp-green-15: rgba(158, 206, 106, 0.15);
+  --ctp-green-25: rgba(158, 206, 106, 0.25);
+
+  --ctp-blue-15: rgba(122, 162, 247, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

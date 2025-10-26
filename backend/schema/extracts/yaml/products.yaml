@@ -1,0 +1,19 @@
+# Product data source extraction (XML format)
+extract_products:
+  stage: extract
+  runner: xml_reader
+  depends_on: []
+  input:
+    path: "{DATA_DIR}"
+    files: "products.xml"
+    row_xpath: "./product"
+    fields:
+      product_id: "product_id"
+      product_name: "product_name"
+      category: "category"
+      price: "price"
+      stock: "stock"
+  processors:
+    - normalize_headers
+  output:
+    table: products

@@ -1,0 +1,108 @@
+/* Settings View */
+.settings-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 32px 32px 32px;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.settings-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ctp-surface1);
+}
+
+.setting-item {
+  margin-bottom: 24px;
+}
+
+.setting-item:last-child {
+  margin-bottom: 0;
+}
+
+.setting-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.setting-label-text {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ctp-text);
+  margin-bottom: 4px;
+}
+
+.setting-label-desc {
+  display: block;
+  font-size: 13px;
+  color: var(--ctp-overlay0);
+}
+
+.setting-control {
+  display: flex;
+  gap: 8px;
+}
+
+.folder-control {
+  display: flex;
+  gap: 8px;
+}
+
+.input-text {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 8px;
+  color: var(--ctp-text);
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.input-text:focus {
+  outline: none;
+  border-color: var(--ctp-mauve);
+}
+
+.input-text::placeholder {
+  color: var(--ctp-overlay0);
+}
+
+.input-text:read-only {
+  cursor: default;
+}
+
+.input-select {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 8px;
+  color: var(--ctp-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.input-select:focus {
+  outline: none;
+  border-color: var(--ctp-mauve);
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 32px 32px 32px;
+}

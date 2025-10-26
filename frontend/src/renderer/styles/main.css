@@ -1,0 +1,27 @@
+/* Theme variables are loaded dynamically from themes/ directory */
+/* Default theme: Catppuccin Frappé */
+/* Available themes: Frappé, Mocha, Latte, Macchiato */
+/* Theme colors are defined using CSS custom properties (--ctp-*) */
+
+/* Import Modular CSS Files */
+@import './base.css';
+@import './splash-screen.css';
+@import './title-bar.css';
+@import './layout.css';
+@import './buttons.css';
+@import './projects.css';
+@import './logs.css';
+@import './settings.css';
+@import './scrollbar.css';
+@import './animations.css';
+@import './toast.css';
+@import './dialog.css';
+@import './dropdown.css';
+@import './theme-selector.css';
+@import './command-palette.css';
+@import './forms.css';
+@import './help-menu.css';
+@import './release-notes.css';
+@import './dashboard.css';
+@import './settings-dialog.css';
+@import './plugins.css';

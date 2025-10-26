@@ -1,0 +1,264 @@
+<!-- Settings Dialog -->
+<div class="dialog-overlay" id="dialog-settings">
+  <div class="dialog dialog-xlarge settings-dialog">
+    <!-- Close button at top-right -->
+    <button class="settings-dialog-close" data-close="settings" data-icon="X" data-icon-size="20">
+    </button>
+
+    <div class="settings-layout">
+      <!-- Settings Sidebar -->
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-header">
+          <h2 class="settings-main-title">Settings</h2>
+        </div>
+        <nav class="settings-nav">
+          <button class="settings-nav-item active" data-settings-tab="general">
+            <span data-icon="Settings" data-icon-size="18"></span>
+            <span>General</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="appearance">
+            <span data-icon="Moon" data-icon-size="18"></span>
+            <span>Appearance</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="editor">
+            <span data-icon="FileText" data-icon-size="18"></span>
+            <span>Editor</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="security">
+            <span data-icon="Lock" data-icon-size="18"></span>
+            <span>Security</span>
+          </button>
+          <button class="settings-nav-item" data-settings-tab="advanced">
+            <span data-icon="Sliders" data-icon-size="18"></span>
+            <span>Advanced</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Settings Content -->
+      <main class="settings-content">
+        <!-- General Tab -->
+        <div class="settings-tab active" id="settings-tab-general">
+          <h2 class="settings-content-title">General</h2>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Current version</h3>
+            </div>
+            <div class="settings-row settings-row-spaced">
+              <span class="version-number-large">0.10.14</span>
+              <div class="settings-row-action">
+                <button class="btn btn-secondary btn-compact">Check for updates</button>
+                <a href="#" class="settings-link-inline">What's new?</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Language</h3>
+            </div>
+            <div class="settings-row">
+              <select class="input-select settings-select-compact">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="de">Deutsch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Root Projects Folder</h3>
+              <p class="settings-group-desc">The folder where your project folders are located</p>
+            </div>
+            <div class="settings-row">
+              <input type="text" id="dialog-root-folder-input" class="input-text input-text-compact" placeholder="No folder selected" readonly />
+              <button class="btn btn-secondary btn-compact" id="dialog-select-folder-btn">
+                <span data-icon="Folder" data-icon-size="16"></span>
+                <span>Browse</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">ETL Project Path</h3>
+              <p class="settings-group-desc">Path to the Python ETL project folder (where pipeline.cli module is located)</p>
+            </div>
+            <div class="settings-row">
+              <input type="text" id="dialog-etl-project-input" class="input-text input-text-compact" placeholder="No ETL project selected" readonly />
+              <button class="btn btn-secondary btn-compact" id="dialog-select-etl-project-btn">
+                <span data-icon="Folder" data-icon-size="16"></span>
+                <span>Browse</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Notifications & Sounds</h3>
+              <p class="settings-group-desc">Configure desktop notifications and sound alerts</p>
+            </div>
+
+            <div class="settings-row settings-row-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifications-enabled-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="settings-row-label">Show desktop notifications when scripts finish</span>
+            </div>
+
+            <div class="settings-row settings-row-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="sounds-enabled-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="settings-row-label">Play sound alerts for script completion and errors</span>
+            </div>
+
+            <div class="settings-row">
+              <div class="settings-slider-group">
+                <label class="settings-row-label">Sound Volume</label>
+                <div class="settings-slider-row">
+                  <input type="range" id="sound-volume-slider" class="settings-slider" min="0" max="100" value="70" />
+                  <span class="settings-slider-value" id="sound-volume-value">70%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-row">
+              <button class="btn btn-secondary btn-compact" id="test-notification-btn">
+                <span data-icon="Bell" data-icon-size="16"></span>
+                <span>Test Notification</span>
+              </button>
+              <button class="btn btn-secondary btn-compact" id="test-sound-success-btn">
+                <span data-icon="Volume2" data-icon-size="16"></span>
+                <span>Test Success Sound</span>
+              </button>
+              <button class="btn btn-secondary btn-compact" id="test-sound-error-btn">
+                <span data-icon="Volume2" data-icon-size="16"></span>
+                <span>Test Error Sound</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance Tab -->
+        <div class="settings-tab" id="settings-tab-appearance">
+          <h2 class="settings-content-title">Appearance</h2>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Native title bar</h3>
+            </div>
+            <div class="settings-row settings-row-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" id="native-titlebar-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="settings-row-label">Enables the native window title bar on Windows and Linux.</span>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Custom global configuration</h3>
+            </div>
+            <button class="btn btn-secondary btn-compact">
+              <span data-icon="Edit3" data-icon-size="16"></span>
+              Edit global config.edn
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Tab -->
+        <div class="settings-tab" id="settings-tab-editor">
+          <h2 class="settings-content-title">Editor</h2>
+          <div class="settings-group">
+            <p class="settings-group-desc">Editor configuration options will be available here.</p>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="settings-tab" id="settings-tab-security">
+          <h2 class="settings-content-title">Security</h2>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Default Login Mode</h3>
+              <p class="settings-group-desc">Choose which account is logged in by default (user has limited access)</p>
+            </div>
+            <div class="settings-row">
+              <select class="input-select settings-select-compact" id="login-mode-select">
+                <option value="user">User (Limited Access)</option>
+                <option value="admin">Admin (Full Access)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Admin Credentials</h3>
+              <p class="settings-group-desc">Admin account has full access to all features</p>
+            </div>
+            <div class="settings-row">
+              <div style="flex: 1;">
+                <label class="dialog-label-text" style="font-size: 12px; margin-bottom: 4px; display: block;">Username</label>
+                <input type="text" id="admin-username-input" class="input-text input-text-compact" placeholder="admin" />
+              </div>
+            </div>
+            <div class="settings-row" style="margin-top: 8px;">
+              <div style="flex: 1;">
+                <label class="dialog-label-text" style="font-size: 12px; margin-bottom: 4px; display: block;">Password</label>
+                <input type="password" id="admin-password-input" class="input-text input-text-compact" placeholder="Enter admin password" />
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">User Credentials</h3>
+              <p class="settings-group-desc">User account has limited access (Editor, Database, Reports are locked)</p>
+            </div>
+            <div class="settings-row">
+              <div style="flex: 1;">
+                <label class="dialog-label-text" style="font-size: 12px; margin-bottom: 4px; display: block;">Username</label>
+                <input type="text" id="user-username-input" class="input-text input-text-compact" placeholder="user" />
+              </div>
+            </div>
+            <div class="settings-row" style="margin-top: 8px;">
+              <div style="flex: 1;">
+                <label class="dialog-label-text" style="font-size: 12px; margin-bottom: 4px; display: block;">Password</label>
+                <input type="password" id="user-password-input" class="input-text input-text-compact" placeholder="Enter user password" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Tab -->
+        <div class="settings-tab" id="settings-tab-advanced">
+          <h2 class="settings-content-title">Advanced</h2>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Developer Tools</h3>
+              <p class="settings-group-desc">Open the browser developer tools for debugging</p>
+            </div>
+            <button class="btn btn-secondary btn-compact" id="toggle-devtools-btn">
+              <span data-icon="Terminal" data-icon-size="16"></span>
+              Toggle Developer Tools
+            </button>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Save Button at bottom -->
+      <div class="settings-footer">
+        <button class="btn btn-primary" id="dialog-save-settings-btn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>

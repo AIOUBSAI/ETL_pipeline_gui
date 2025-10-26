@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pipeline_name }} - Pipeline Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #FF6945;
+            --primary-dark: #E55A3C;
+            --success: #00C48C;
+            --error: #FF5252;
+            --warning: #FFB020;
+            --info: #3B82F6;
+            --bg-dark: #1F2937;
+            --bg-medium: #374151;
+            --bg-light: #F9FAFB;
+            --border: #E5E7EB;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'liga';
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .header-stats {
+            margin-left: auto;
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+        }
+
+        .header-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-stat .material-icons {
+            font-size: 20px;
+        }
+
+        .header-stat.success { color: var(--success); }
+        .header-stat.error { color: var(--error); }
+        .header-stat.pending { color: var(--warning); }
+        .header-stat.duration { color: var(--info); }
+
+        .header-stat-value {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - 60px);
+            background: white;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 900;
+        }
+
+        .search-box {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-light);
+            position: relative;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box .material-icons {
+            position: absolute;
+            left: 28px;
+            top: 28px;
+            color: var(--text-light);
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        .nav-section {
+            padding: 8px 0;
+        }
+
+        .nav-section-title {
+            padding: 12px 20px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .nav-item .material-icons {
+            font-size: 20px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: #FEF3F0;
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .nav-item.active .material-icons {
+            color: var(--primary);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active .nav-badge {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: 60px;
+            padding: 32px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title .material-icons {
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .metric-icon .material-icons {
+            font-size: 28px;
+            color: white.
+        }
+
+        .metric-icon.success { background: linear-gradient(135deg, #10B981, #059669); }
+        .metric-icon.error { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .metric-icon.info { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .metric-icon.warning { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .metric-detail {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .material-icons {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Tabs within cards */
+        .inner-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-light);
+        }
+
+        .inner-tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inner-tab .material-icons {
+            font-size: 18px;
+        }
+
+        .inner-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 105, 69, 0.05);
+        }
+
+        .inner-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: white;
+        }
+
+        .inner-tab-content {
+            display: none;
+            padding: 24px;
+        }
+
+        .inner-tab-content.active {
+            display: block;
+        }
+
+        /* Job List */
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .job-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .job-card-header {
+            padding: 16px 20px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .job-card-header:hover {
+            background: #F3F4F6;
+        }
+
+        .status-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-icon.success {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-icon.error {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .status-icon .material-icons {
+            font-size: 18px;
+        }
+
+        .job-info { flex: 1; }
+
+        .job-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .job-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .job-meta .material-icons {
+            font-size: 16px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .expand-icon {
+            color: var(--text-light);
+            transition: transform 0.2s;
+        }
+
+        .job-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .job-card-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .job-card.expanded .job-card-body {
+            max-height: 5000px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: white;
+        }
+
+        .data-table th {
+            background: var(--bg-light);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* File List */
+        .file-grid { display: grid; gap: 12px; }
+
+        .file-card {
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border-left: 3px solid var(--success);
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .file-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .file-stat .material-icons { font-size: 16px; }
+
+        /* Processor List */
+        .processor-list { display: grid; gap: 12px; }
+
+        .processor-card {
+            padding: 16px;
+            background: #EFF6FF;
+            border-radius: 8px;
+            border-left: 3px solid var(--info);
+        }
+
+        .processor-name {
+            font-weight: 600;
+            color: var(--info);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .processor-opts {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            margin-top: 12px;
+            padding: 16px;
+            background: #1F2937;
+            color: #F9FAFB;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Tag */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tag .material-icons { font-size: 14px; }
+
+        .tag.primary { background: #FEF3F0; color: var(--primary); }
+        .tag.info { background: #DBEAFE; color: var(--info); }
+        .tag.success { background: #D1FAE5; color: var(--success); }
+
+        /* Stage Grid */
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .stage-card {
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .stage-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .stage-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stage-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .stage-icon .material-icons { font-size: 24px; }
+
+        .stage-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stage-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stage-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Log Viewer */
+        .log-viewer {
+            background: #1F2937;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #F9FAFB;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .log-line { padding: 2px 0; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state .material-icons {
+            font-size: 64px;
+            opacity: 0.3;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open { transform: translateX(0); }
+
+            .main-content { margin-left: 0; }
+
+            .metrics-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">
+            <div class="header-logo">
+                <span class="material-icons">dashboard</span>
+            </div>
+            <span>{{ pipeline_name }}</span>
+        </div>
+        <div class="header-stats">
+            <div class="header-stat success">
+                <span class="material-icons">check_circle</span>
+                <span class="header-stat-value">{{ succeeded }}</span>
+            </div>
+            <div class="header-stat error">
+                <span class="material-icons">cancel</span>
+                <span class="header-stat-value">{{ failed }}</span>
+            </div>
+            <div class="header-stat pending">
+                <span class="material-icons">pending</span>
+                <span class="header-stat-value">{{ skipped }}</span>
+            </div>
+            <div class="header-stat duration">
+                <span class="material-icons">schedule</span>
+                <span class="header-stat-value">{{ timestamp.split()[1] if ' ' in timestamp else 'N/A' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="search-box">
+            <span class="material-icons">search</span>
+            <input type="text" class="search-input" placeholder="Search jobs, stages..." onkeyup="filterNav(this.value)">
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Navigation</div>
+            <div class="nav-item active" onclick="switchTab(event, 'overview')" data-search="overview dashboard">
+                <span class="material-icons">dashboard</span>
+                <span>Overview</span>
+            </div>
+            {% for stage in jobs_by_stage.keys() %}
+            <div class="nav-item" onclick="switchTab(event, '{{ stage }}')" data-search="{{ stage }}">
+                <span class="material-icons">
+                    {% if stage == 'extract' %}download
+                    {% elif stage == 'stage' %}inventory_2
+                    {% elif stage == 'transform' %}transform
+                    {% elif stage == 'load' %}upload
+                    {% else %}folder{% endif %}
+                </span>
+                <span>{{ stage|title }}</span>
+                <span class="nav-badge">{{ jobs_by_stage[stage]|length }}</span>
+            </div>
+            {% endfor %}
+            {% if dbt_summary %}
+            <div class="nav-item" onclick="switchTab(event, 'dbt')" data-search="dbt models transformations">
+                <span class="material-icons">settings</span>
+                <span>DBT Models</span>
+                <span class="nav-badge">{{ dbt_summary.results|length }}</span>
+            </div>
+            {% endif %}
+            {% if schema_stats %}
+            <div class="nav-item" onclick="switchTab(event, 'warehouse')" data-search="warehouse database schema">
+                <span class="material-icons">storage</span>
+                <span>Warehouse</span>
+            </div>
+            {% endif %}
+            {% if quality_summary %}
+            <div class="nav-item" onclick="switchTab(event, 'quality')" data-search="quality data checks validation">
+                <span class="material-icons">verified_user</span>
+                <span>Data Quality</span>
+                <span class="nav-badge">{{ quality_summary.total_checks }}</span>
+            </div>
+            {% endif %}
+            {% if lineage_data %}
+            <div class="nav-item" onclick="switchTab(event, 'lineage')" data-search="lineage dependencies flow">
+                <span class="material-icons">account_tree</span>
+                <span>Lineage</span>
+            </div>
+            {% endif %}
+            {% if config_validation %}
+            <div class="nav-item" onclick="switchTab(event, 'config')" data-search="config validation pydantic">
+                <span class="material-icons">verified</span>
+                <span>Config Validation</span>
+            </div>
+            {% endif %}
+            {% if log_lines %}
+            <div class="nav-item" onclick="switchTab(event, 'logs')" data-search="logs output">
+                <span class="material-icons">description</span>
+                <span>Logs</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if dbt_summary %}
+        <div class="nav-section">
+            <div class="nav-section-title">Resources</div>
+            <a href="../dbt/target/index.html" target="_blank" class="nav-item">
+                <span class="material-icons">open_in_new</span>
+                <span>DBT Docs</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Overview Tab -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">dashboard</span>
+                    Pipeline Dashboard
+                </h1>
+                <p class="page-subtitle">Comprehensive view of your ETL pipeline execution</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon success">
+                            <span class="material-icons">task_alt</span>
+                        </div>
+                    </div>
+                    <div class="metric-label">Total Jobs</div>
+                    <div class="metric-value">{{ succeeded + failed + skipped }}</div>
+                    <div class="metric-detail">{{ succeeded }} successful, {{ failed }} failed</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">schedule</span>
+                    </div>
+                    <div class="metric-label">Execution Time</div>
+                    <div class="metric-value">{{ timestamp.split()[1] if ' ' in timestamp else 'N/A' }}</div>
+                    <div class="metric-detail">Completed {{ timestamp.split()[0] if ' ' in timestamp else timestamp }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon warning">
+                        <span class="material-icons">layers</span>
+                    </div>
+                    <div class="metric-label">Pipeline Stages</div>
+                    <div class="metric-value">{{ jobs_by_stage|length }}</div>
+                    <div class="metric-detail">Extract, Stage, Transform, Load</div>
+                </div>
+
+                {% if dbt_summary %}
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">settings</span>
+                    </div>
+                    <div class="metric-label">DBT Models</div>
+                    <div class="metric-value">{{ dbt_summary.results|length }}</div>
+                    <div class="metric-detail">{{ dbt_summary.success }} successful, {{ "%.1f"|format(dbt_summary.elapsed_time) }}s</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">view_module</span>
+                        Pipeline Stages
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="stage-grid">
+                        {% for stage, stage_jobs in jobs_by_stage.items() %}
+                        <div class="stage-card" onclick="switchTab(event, '{{ stage }}')">
+                            <div class="stage-card-header">
+                                <div class="stage-icon">
+                                    <span class="material-icons">
+                                        {% if stage == 'extract' %}download
+                                        {% elif stage == 'stage' %}inventory_2
+                                        {% elif stage == 'transform' %}transform
+                                        {% elif stage == 'load' %}upload
+                                        {% else %}folder{% endif %}
+                                    </span>
+                                </div>
+                                <div class="stage-name">{{ stage|title }}</div>
+                            </div>
+                            <div class="stage-stats">
+                                <div class="stage-stat">{{ stage_jobs|length }} jobs</div>
+                                <div class="stage-stat" style="color: var(--success);">
+                                    <span class="material-icons" style="font-size: 16px;">check_circle</span>
+                                    {{ stage_jobs|selectattr('status', 'equalto', 'success')|list|length }}
+                                </div>
+                                {% set fails = stage_jobs|selectattr('status', 'equalto', 'failed')|list|length %}
+                                {% if fails > 0 %}
+                                <div class="stage-stat" style="color: var(--error);">
+                                    <span class="material-icons" style="font-size: 16px;">cancel</span>
+                                    {{ fails }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage Tabs -->
+        {% for stage, stage_jobs in jobs_by_stage.items() %}
+        <div id="tab-{{ stage }}" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">
+                        {% if stage == 'extract' %}download
+                        {% elif stage == 'stage' %}inventory_2
+                        {% elif stage == 'transform' %}transform
+                        {% elif stage == 'load' %}upload
+                        {% else %}folder{% endif %}
+                    </span>
+                    {{ stage|title }} Stage
+                </h1>
+                <p class="page-subtitle">
+                    {{ stage_jobs|length }} job(s) •
+                    {{ stage_jobs|selectattr('status', 'equalto', 'success')|list|length }} successful •
+                    {{ stage_jobs|selectattr('status', 'equalto', 'failed')|list|length }} failed
+                </p>
+            </div>
+
+            <div class="job-list">
+                {% for job in stage_jobs %}
+                <div class="job-card" id="{{ stage }}-job-{{ loop.index }}">
+                    <div class="job-card-header" onclick="toggleJobCard(event)">
+                        <div class="status-icon {{ job.status }}">
+                            <span class="material-icons">{{ 'check_circle' if job.status == 'success' else 'cancel' }}</span>
+                        </div>
+                        <div class="job-info">
+                            <div class="job-name">{{ job.name }}</div>
+                            <div class="job-meta">
+                                {% if job.config.get('description') %}
+                                <span>{{ job.config.get('description') }}</span>
+                                {% endif %}
+                                {% if job.duration > 0 %}
+                                <span>
+                                    <span class="material-icons">schedule</span>
+                                    {{ "%.0f"|format(job.duration * 1000) }}ms
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <span class="material-icons expand-icon">expand_more</span>
+                    </div>
+                    <div class="job-card-body">
+                        {% if job.status == 'success' %}
+                        <div class="inner-tabs">
+                            <div class="inner-tab active" onclick="switchInnerTab(event, '{{ stage }}-job-{{ loop.index }}-summary')">
+                                <span class="material-icons">info</span>
+                                Summary
+                            </div>
+                            {% if job.files_processed %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, '{{ stage }}-job-{{ loop.index }}-files')">
+                                <span class="material-icons">folder</span>
+                                Files ({{ job.files_processed|length }})
+                            </div>
+                            {% endif %}
+                            {% if job.processors_applied %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, '{{ stage }}-job-{{ loop.index }}-processors')">
+                                <span class="material-icons">settings</span>
+                                Processors ({{ job.processors_applied|length }})
+                            </div>
+                            {% endif %}
+                            {% if job.schema_info and job.schema_info.get('column_types') %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, '{{ stage }}-job-{{ loop.index }}-schema')">
+                                <span class="material-icons">table_chart</span>
+                                Schema
+                            </div>
+                            {% endif %}
+                            {% if job.sql_executed %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, '{{ stage }}-job-{{ loop.index }}-sql')">
+                                <span class="material-icons">code</span>
+                                SQL
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div id="{{ stage }}-job-{{ loop.index }}-summary" class="inner-tab-content active">
+                            {% if job.row_counts or job.output_table or job.metrics %}
+                            <div class="info-grid">
+                                {% if job.output_table %}
+                                <div class="info-item">
+                                    <div class="info-label">Output Table</div>
+                                    <div class="info-value">{{ job.output_table }}</div>
+                                </div>
+                                {% endif %}
+                                {% for key, value in job.row_counts.items() %}
+                                <div class="info-item">
+                                    <div class="info-label">{{ key.replace('_', ' ')|title }}</div>
+                                    <div class="info-value">{{ "{:,}".format(value) if value is number else value }}</div>
+                                </div>
+                                {% endfor %}
+                                {% for key, value in job.metrics.items() %}
+                                {% if value and value != '' and value != [] and key not in ['source', 'target'] %}
+                                <div class="info-item">
+                                    <div class="info-label">{{ key.replace('_', ' ')|title }}</div>
+                                    <div class="info-value">{{ value|join(', ') if (value is iterable and value is not string) else value }}</div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <span class="material-icons">info</span>
+                                <p>No summary data available</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if job.files_processed %}
+                        <div id="{{ stage }}-job-{{ loop.index }}-files" class="inner-tab-content">
+                            <div class="file-grid">
+                                {% for file in job.files_processed %}
+                                <div class="file-card">
+                                    <div class="file-name">
+                                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">insert_drive_file</span>
+                                        {{ file.file if file.get('file') else file.table }}
+                                    </div>
+                                    <div class="file-stats">
+                                        {% if file.get('initial_rows') is not none %}
+                                        <div class="file-stat">
+                                            <span class="material-icons">table_rows</span>
+                                            {{ "{:,}".format(file.initial_rows) }} rows
+                                        </div>
+                                        {% if file.get('rows_removed', 0) > 0 %}
+                                        <div class="file-stat">
+                                            <span class="material-icons">arrow_forward</span>
+                                            {{ "{:,}".format(file.final_rows) }} ({{ "{:,}".format(file.rows_removed) }} filtered)
+                                        </div>
+                                        {% endif %}
+                                        {% elif file.get('rows') %}
+                                        <div class="file-stat">
+                                            <span class="material-icons">table_rows</span>
+                                            {{ "{:,}".format(file.rows) }} rows
+                                        </div>
+                                        {% endif %}
+                                        {% if file.get('final_columns') %}
+                                        <div class="file-stat">
+                                            <span class="material-icons">view_column</span>
+                                            {{ file.final_columns }} columns
+                                        </div>
+                                        {% elif file.get('columns') %}
+                                        <div class="file-stat">
+                                            <span class="material-icons">view_column</span>
+                                            {{ file.columns }} columns
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if file.get('schema') %}
+                                    <details style="margin-top: 12px;">
+                                        <summary style="cursor: pointer; font-weight: 500; font-size: 13px; color: var(--text-secondary);">
+                                            <span class="material-icons" style="vertical-align: middle; font-size: 16px;">table_chart</span>
+                                            View Schema
+                                        </summary>
+                                        <table class="data-table" style="margin-top: 8px;">
+                                            <thead>
+                                                <tr><th>Column</th><th>Type</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for col, dtype in file.schema.items() %}
+                                                <tr><td>{{ col }}</td><td>{{ dtype }}</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </details>
+                                    {% endif %}
+                                    {% if file.get('sample_data') %}
+                                    <details style="margin-top: 8px;">
+                                        <summary style="cursor: pointer; font-weight: 500; font-size: 13px; color: var(--text-secondary);">
+                                            <span class="material-icons" style="vertical-align: middle; font-size: 16px;">preview</span>
+                                            Sample Data
+                                        </summary>
+                                        <table class="data-table" style="margin-top: 8px;">
+                                            <thead>
+                                                <tr>{% for key in file.sample_data[0].keys() %}<th>{{ key }}</th>{% endfor %}</tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for row in file.sample_data %}
+                                                <tr>{% for value in row.values() %}<td>{{ value }}</td>{% endfor %}</tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </details>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if job.processors_applied %}
+                        <div id="{{ stage }}-job-{{ loop.index }}-processors" class="inner-tab-content">
+                            <div class="processor-list">
+                                {% for proc in job.processors_applied %}
+                                <div class="processor-card">
+                                    <div class="processor-name">
+                                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">settings</span>
+                                        {{ proc.name }}
+                                    </div>
+                                    {% if proc.options %}
+                                    <div class="processor-opts">
+                                        {% for key, value in proc.options.items() %}
+                                        <div><strong>{{ key }}:</strong>
+                                        {% if value is mapping %}
+                                            {% for k, v in value.items() %}"{{ k }}" → "{{ v }}"{% if not loop.last %}, {% endif %}{% endfor %}
+                                        {% else %}
+                                            {{ value|join(', ') if (value is iterable and value is not string) else value }}
+                                        {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if job.schema_info and job.schema_info.get('column_types') %}
+                        <div id="{{ stage }}-job-{{ loop.index }}-schema" class="inner-tab-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Column</th><th>Type</th><th>Nullable</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for col, dtype in job.schema_info.column_types.items() %}
+                                    <tr>
+                                        <td>{{ col }}</td>
+                                        <td>{{ dtype }}</td>
+                                        <td>
+                                            {% if col in job.schema_info.get('nullable_columns', []) %}
+                                            <span class="material-icons" style="font-size: 16px; color: var(--success);">check</span>
+                                            {% else %}
+                                            <span class="material-icons" style="font-size: 16px; color: var(--text-light);">close</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+
+                        {% if job.sql_executed %}
+                        <div id="{{ stage }}-job-{{ loop.index }}-sql" class="inner-tab-content">
+                            {% if job.validation_results and job.validation_results.get('transformations') %}
+                            <!-- YAML Transformations View -->
+                            {% for transform in job.validation_results.transformations %}
+                            <div style="margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                                <div style="background: var(--bg-light); padding: 16px; border-bottom: 1px solid var(--border);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div class="status-icon {{ transform.status }}" style="width: 24px; height: 24px;">
+                                                <span class="material-icons" style="font-size: 16px;">{{ 'check_circle' if transform.status == 'success' else 'cancel' }}</span>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 15px; color: var(--text-primary);">{{ transform.name }}</div>
+                                                {% if transform.description %}
+                                                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">{{ transform.description }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            {% if transform.schema %}
+                                            <span class="tag info">
+                                                <span class="material-icons">folder</span>
+                                                {{ transform.schema }}
+                                            </span>
+                                            {% endif %}
+                                            {% if transform.object_type %}
+                                            <span class="tag primary">{{ transform.object_type }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    {% if transform.tables_created or transform.depends_on or transform.tags %}
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; font-size: 12px;">
+                                        {% if transform.tables_created %}
+                                        <div>
+                                            <div style="color: var(--text-light); font-weight: 600; margin-bottom: 4px;">CREATES</div>
+                                            <div style="color: var(--text-primary);">{{ transform.tables_created|join(', ') }}</div>
+                                        </div>
+                                        {% endif %}
+                                        {% if transform.depends_on %}
+                                        <div>
+                                            <div style="color: var(--text-light); font-weight: 600; margin-bottom: 4px;">DEPENDS ON</div>
+                                            <div style="color: var(--text-primary);">{{ transform.depends_on|join(', ') }}</div>
+                                        </div>
+                                        {% endif %}
+                                        {% if transform.tags %}
+                                        <div>
+                                            <div style="color: var(--text-light); font-weight: 600; margin-bottom: 4px;">TAGS</div>
+                                            <div>{% for tag in transform.tags %}<span class="tag primary" style="margin-right: 4px; margin-bottom: 4px;">{{ tag }}</span>{% endfor %}</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if transform.notes %}
+                                    <div style="margin-top: 12px; padding: 8px 12px; background: #FEF3F0; border-left: 3px solid var(--primary); border-radius: 4px; font-size: 13px; color: var(--text-secondary);">
+                                        <span class="material-icons" style="vertical-align: middle; font-size: 16px; margin-right: 4px;">info</span>
+                                        {{ transform.notes }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <details style="border-top: 1px solid var(--border);">
+                                    <summary style="cursor: pointer; padding: 12px 16px; font-weight: 500; color: var(--text-secondary); background: white;">
+                                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px;">code</span>
+                                        View SQL ({{ transform.sql_lines }} lines)
+                                    </summary>
+                                    <div style="padding: 16px;">
+                                        <div class="code-block">{{ transform.sql }}</div>
+                                    </div>
+                                </details>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <!-- Traditional SQL View -->
+                            {% for sql in job.sql_executed %}
+                            <details open style="margin-bottom: 16px;">
+                                <summary style="cursor: pointer; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary);">
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px;">code</span>
+                                    SQL Statement ({{ sql.split('\n')|length }} lines)
+                                </summary>
+                                <div class="code-block">{{ sql }}</div>
+                            </details>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <div class="inner-tab-content active" style="padding: 24px;">
+                            <div style="padding: 12px; background: #FEE2E2; border-left: 3px solid var(--error); border-radius: 4px; color: #991B1B;">
+                                <strong>Error:</strong> {{ job.error if job.error else 'Job failed without error message' }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- DBT Tab -->
+        {% if dbt_summary %}
+        <div id="tab-dbt" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">settings</span>
+                    DBT Transformations
+                </h1>
+            <p class="page-subtitle">
+                {{ dbt_summary.results|length }} model(s) •
+                {{ dbt_summary.success }} successful •
+                {{ dbt_summary.error }} failed •
+                {{ "%.1f"|format(dbt_summary.elapsed_time) }}s execution time
+            </p>
+            </div>
+
+            <div class="job-list">
+                {% for result in dbt_summary.results %}
+                <div class="job-card" id="dbt-{{ loop.index }}">
+                    <div class="job-card-header" onclick="toggleJobCard(event)">
+                        <div class="status-icon {{ result.status }}">
+                            <span class="material-icons">{{ 'check_circle' if result.status == 'success' else 'cancel' }}</span>
+                        </div>
+                        <div class="job-info">
+                            <div class="job-name">{{ result.get('model_name', result.unique_id.split('.')[-1]) }}</div>
+                            <div class="job-meta">
+                                {% if result.get('description') %}
+                                <span>{{ result.description }}</span>
+                                {% endif %}
+                                <span>
+                                    <span class="material-icons">schedule</span>
+                                    {{ "%.0f"|format(result.execution_time * 1000) }}ms
+                                </span>
+                            </div>
+                        </div>
+                        <span class="material-icons expand-icon">expand_more</span>
+                    </div>
+                    <div class="job-card-body">
+                        <div class="inner-tabs">
+                            <div class="inner-tab active" onclick="switchInnerTab(event, 'dbt-{{ loop.index }}-info')">
+                                <span class="material-icons">info</span>
+                                Info
+                            </div>
+                            {% if result.get('depends_on') and result.depends_on.get('nodes') %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, 'dbt-{{ loop.index }}-deps')">
+                                <span class="material-icons">account_tree</span>
+                                Dependencies
+                            </div>
+                            {% endif %}
+                            {% if result.get('columns') %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, 'dbt-{{ loop.index }}-columns')">
+                                <span class="material-icons">view_column</span>
+                                Columns ({{ result.columns|length }})
+                            </div>
+                            {% endif %}
+                            {% if result.get('raw_sql') %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, 'dbt-{{ loop.index }}-raw')">
+                                <span class="material-icons">code</span>
+                                Raw SQL
+                            </div>
+                            {% endif %}
+                            {% if result.get('compiled_sql') %}
+                            <div class="inner-tab" onclick="switchInnerTab(event, 'dbt-{{ loop.index }}-compiled')">
+                                <span class="material-icons">integration_instructions</span>
+                                Compiled SQL
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div id="dbt-{{ loop.index }}-info" class="inner-tab-content active">
+                            <div class="info-grid">
+                                {% if result.get('schema') %}
+                                <div class="info-item">
+                                    <div class="info-label">Schema</div>
+                                    <div class="info-value">{{ result.schema }}</div>
+                                </div>
+                                {% endif %}
+                                {% if result.get('database') %}
+                                <div class="info-item">
+                                    <div class="info-label">Database</div>
+                                    <div class="info-value">{{ result.database }}</div>
+                                </div>
+                                {% endif %}
+                                {% if result.get('materialization') %}
+                                <div class="info-item">
+                                    <div class="info-label">Materialization</div>
+                                    <div class="info-value">{{ result.materialization }}</div>
+                                </div>
+                                {% endif %}
+                                {% if result.get('object_type') %}
+                                <div class="info-item">
+                                    <div class="info-label">Object Type</div>
+                                    <div class="info-value">{{ result.object_type }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if result.get('tags') %}
+                            <div style="margin-top: 16px;">
+                                <div class="info-label" style="margin-bottom: 8px;">Tags</div>
+                                {% for tag in result.tags %}
+                                <span class="tag primary">
+                                    <span class="material-icons">label</span>
+                                    {{ tag }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if result.get('depends_on') and result.depends_on.get('nodes') %}
+                        <div id="dbt-{{ loop.index }}-deps" class="inner-tab-content">
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                {% for dep in result.depends_on.nodes %}
+                                <span class="tag info">
+                                    <span class="material-icons">account_tree</span>
+                                    {{ dep.split('.')[-1] }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if result.get('columns') %}
+                        <div id="dbt-{{ loop.index }}-columns" class="inner-tab-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr><th>Column</th><th>Description</th><th>Data Type</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for col_name, col_info in result.columns.items() %}
+                                    <tr>
+                                        <td><strong>{{ col_name }}</strong></td>
+                                        <td>{{ col_info.get('description', '-') if col_info is mapping else '-' }}</td>
+                                        <td>{{ col_info.get('data_type', '-') if col_info is mapping else '-' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+
+                        {% if result.get('raw_sql') %}
+                        <div id="dbt-{{ loop.index }}-raw" class="inner-tab-content">
+                            <div class="code-block">{{ result.raw_sql }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if result.get('compiled_sql') %}
+                        <div id="dbt-{{ loop.index }}-compiled" class="inner-tab-content">
+                            <div class="code-block">{{ result.compiled_sql }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Warehouse Tab -->
+        {% if schema_stats %}
+        <div id="tab-warehouse" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">storage</span>
+                    Data Warehouse
+                </h1>
+                <p class="page-subtitle">
+                    {{ schema_stats|length }} schema(s) •
+                    {% set total_tables = namespace(count=0) %}
+                    {% for tables in schema_stats.values() %}{% set total_tables.count = total_tables.count + tables|length %}{% endfor %}
+                    {{ total_tables.count }} table(s)
+                </p>
+            </div>
+
+            {% for schema, tables in schema_stats.items() %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">folder</span>
+                        {{ schema }}
+                    </div>
+                    <span style="color: var(--text-secondary); font-size: 14px;">{{ tables|length }} tables</span>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Table</th><th>Rows</th><th>Columns</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in tables %}
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px; color: var(--text-secondary);">table_chart</span>
+                                    <strong>{{ stat.table }}</strong>
+                                </td>
+                                <td>{{ "{:,}".format(stat.rows) }}</td>
+                                <td>{{ stat.columns }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Config Validation Tab -->
+        {% if config_validation %}
+        <div id="tab-config" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">verified</span>
+                    Configuration Validation
+                </h1>
+                <p class="page-subtitle">Pydantic-validated pipeline configuration with integrity checks</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <span class="material-icons">check_circle</span>
+                    </div>
+                    <div class="metric-label">Validation Status</div>
+                    <div class="metric-value">{{ config_validation.status }}</div>
+                    <div class="metric-detail">All checks passed</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">work</span>
+                    </div>
+                    <div class="metric-label">Jobs Defined</div>
+                    <div class="metric-value">{{ config_validation.jobs_count }}</div>
+                    <div class="metric-detail">Across {{ config_validation.stages_count }} stages</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon warning">
+                        <span class="material-icons">account_tree</span>
+                    </div>
+                    <div class="metric-label">Dependencies</div>
+                    <div class="metric-value">{{ config_validation.dependencies_count }}</div>
+                    <div class="metric-detail">All references validated</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">storage</span>
+                    </div>
+                    <div class="metric-label">Databases</div>
+                    <div class="metric-value">{{ config_validation.databases_count }}</div>
+                    <div class="metric-detail">{{ config_validation.database_types|join(', ')|upper }}</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">table_chart</span>
+                        Configuration Summary
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Element</th><th>Count</th><th>Details</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px; color: var(--primary);">layers</span>
+                                    <strong>Pipeline Stages</strong>
+                                </td>
+                                <td><strong>{{ config_validation.stages_count }}</strong></td>
+                                <td>
+                                    {% for stage in config_validation.stages %}
+                                    <span class="tag info" style="margin-right: 4px;">{{ stage }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px; color: var(--success);">work</span>
+                                    <strong>Defined Jobs</strong>
+                                </td>
+                                <td><strong>{{ config_validation.jobs_count }}</strong></td>
+                                <td>All job stage references validated</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px; color: var(--info);">settings</span>
+                                    <strong>Runners</strong>
+                                </td>
+                                <td><strong>{{ config_validation.runners_count }}</strong></td>
+                                <td>
+                                    {% for rtype in config_validation.runner_types %}
+                                    <span class="tag primary" style="margin-right: 4px;">{{ rtype }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px; color: var(--warning);">storage</span>
+                                    <strong>Databases</strong>
+                                </td>
+                                <td><strong>{{ config_validation.databases_count }}</strong></td>
+                                <td>
+                                    {% for dbtype in config_validation.database_types %}
+                                    <span class="tag success" style="margin-right: 4px;">{{ dbtype|upper }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 8px; color: var(--text-secondary);">account_tree</span>
+                                    <strong>Job Dependencies</strong>
+                                </td>
+                                <td><strong>{{ config_validation.dependencies_count }}</strong></td>
+                                <td>All dependency references validated</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">verified_user</span>
+                        Validation Checks Performed
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; gap: 12px;">
+                        {% for check in config_validation.validation_checks %}
+                        <div style="display: flex; align-items: start; gap: 12px; padding: 12px; background: #ECFDF5; border-radius: 8px; border-left: 3px solid var(--success);">
+                            <div class="status-icon success" style="width: 28px; height: 28px; flex-shrink: 0;">
+                                <span class="material-icons" style="font-size: 16px;">check</span>
+                            </div>
+                            <div style="color: #065F46; font-weight: 500; line-height: 1.6;">{{ check }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">info</span>
+                        About Pydantic Validation
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                        This pipeline uses <strong>Pydantic v2</strong> for type-safe configuration validation.
+                        All configuration elements are validated at load time to ensure data integrity and catch errors early.
+                    </p>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Type Safety</div>
+                            <div class="info-value">Full schema validation</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Error Detection</div>
+                            <div class="info-value">Pre-runtime validation</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Integrity Checks</div>
+                            <div class="info-value">Cross-reference validation</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Documentation</div>
+                            <div class="info-value">Self-documenting schema</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Data Quality Tab -->
+        {% if quality_summary %}
+        <div id="tab-quality" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">verified_user</span>
+                    Data Quality
+                </h1>
+                <p class="page-subtitle">Expectation-based data validation with quality gates</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon {% if quality_summary.pass_rate == 100 %}success{% elif quality_summary.pass_rate >= 80 %}warning{% else %}error{% endif %}">
+                        <span class="material-icons">verified</span>
+                    </div>
+                    <div class="metric-label">Pass Rate</div>
+                    <div class="metric-value">{{ "%.1f"|format(quality_summary.pass_rate) }}%</div>
+                    <div class="metric-detail">Overall quality score</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">checklist</span>
+                    </div>
+                    <div class="metric-label">Total Checks</div>
+                    <div class="metric-value">{{ quality_summary.total_checks }}</div>
+                    <div class="metric-detail">Expectations executed</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <span class="material-icons">check_circle</span>
+                    </div>
+                    <div class="metric-label">Passed</div>
+                    <div class="metric-value">{{ quality_summary.passed }}</div>
+                    <div class="metric-detail">Checks succeeded</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon error">
+                        <span class="material-icons">error</span>
+                    </div>
+                    <div class="metric-label">Failed</div>
+                    <div class="metric-value">{{ quality_summary.failed }}</div>
+                    <div class="metric-detail">Checks with issues</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">rule</span>
+                        Quality Check Results
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Check Name</th>
+                                <th>Type</th>
+                                <th>Rows Evaluated</th>
+                                <th>Rows Failed</th>
+                                <th>Failure %</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in quality_summary.results %}
+                            <tr>
+                                <td>
+                                    <div class="status-icon {{ 'success' if result.passed else 'error' }}" style="width: 24px; height: 24px;">
+                                        <span class="material-icons" style="font-size: 16px;">{{ 'check_circle' if result.passed else 'cancel' }}</span>
+                                    </div>
+                                </td>
+                                <td><strong>{{ result.name }}</strong></td>
+                                <td><span class="tag info">{{ result.type }}</span></td>
+                                <td>{{ "{:,}".format(result.rows_evaluated) }}</td>
+                                <td style="color: {% if result.rows_failed > 0 %}var(--error){% else %}var(--text-secondary){% endif %};">
+                                    {{ "{:,}".format(result.rows_failed) }}
+                                </td>
+                                <td style="color: {% if result.failure_pct > 0 %}var(--error){% else %}var(--success){% endif %};">
+                                    {{ "%.2f"|format(result.failure_pct) }}%
+                                </td>
+                                <td>{{ result.message }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">info</span>
+                        About Data Quality Checks
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                        Data quality checks use <strong>expectation-based validation</strong> to ensure data integrity.
+                        Each check validates specific data properties and can trigger actions (warn, fail, quarantine) on violations.
+                    </p>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Check Types</div>
+                            <div class="info-value">NOT_NULL, UNIQUE, IN_SET, BETWEEN, REGEX, CUSTOM</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Actions</div>
+                            <div class="info-value">WARN, FAIL, QUARANTINE</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Threshold Support</div>
+                            <div class="info-value">Configurable failure % tolerance</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Quarantine</div>
+                            <div class="info-value">Failed rows written to parquet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Lineage Tab -->
+        {% if lineage_data %}
+        <div id="tab-lineage" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">account_tree</span>
+                    Data Lineage
+                </h1>
+                <p class="page-subtitle">Column-level data flow tracking from source to output</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon info">
+                        <span class="material-icons">storage</span>
+                    </div>
+                    <div class="metric-label">Datasets</div>
+                    <div class="metric-value">{{ lineage_data.datasets|length }}</div>
+                    <div class="metric-detail">Tracked in lineage graph</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <span class="material-icons">table_chart</span>
+                    </div>
+                    <div class="metric-label">Total Columns</div>
+                    <div class="metric-value">
+                        {% set total_cols = namespace(count=0) %}
+                        {% for ds_info in lineage_data.datasets.values() %}
+                        {% set total_cols.count = total_cols.count + ds_info.columns|length %}
+                        {% endfor %}
+                        {{ total_cols.count }}
+                    </div>
+                    <div class="metric-detail">Across all datasets</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon warning">
+                        <span class="material-icons">receipt_long</span>
+                    </div>
+                    <div class="metric-label">Run ID</div>
+                    <div class="metric-value" style="font-size: 18px;">{{ lineage_data.run_id or 'N/A' }}</div>
+                    <div class="metric-detail">Execution identifier</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">dataset</span>
+                        Dataset Lineage
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Dataset</th>
+                                <th>Type</th>
+                                <th>Columns</th>
+                                <th>Upstream Dependencies</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ds_name, ds_info in lineage_data.datasets.items() %}
+                            <tr>
+                                <td>
+                                    <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px; color: var(--primary);">table_chart</span>
+                                    <strong>{{ ds_name }}</strong>
+                                </td>
+                                <td>
+                                    <span class="tag {% if ds_info.node_type == 'source' %}success{% elif ds_info.node_type == 'transform' %}info{% else %}primary{% endif %}">
+                                        {{ ds_info.node_type }}
+                                    </span>
+                                </td>
+                                <td>{{ ds_info.columns|length }}</td>
+                                <td>
+                                    {% if ds_info.upstream_datasets %}
+                                        {% for up_ds in ds_info.upstream_datasets %}
+                                        <span class="tag info" style="margin-right: 4px;">{{ up_ds }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span style="color: var(--text-light);">None</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {% if lineage_data.graph %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">share</span>
+                        Lineage Graph
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Graph Nodes</div>
+                            <div class="info-value">{{ lineage_data.graph.nodes|length }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Graph Edges</div>
+                            <div class="info-value">{{ lineage_data.graph.edges|length }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Generated At</div>
+                            <div class="info-value">{{ lineage_data.graph.metadata.generated_at.split('T')[1].split('.')[0] if 'T' in lineage_data.graph.metadata.generated_at else 'N/A' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">info</span>
+                        About Data Lineage
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                        Data lineage tracks the complete flow of data from source to output at <strong>column level</strong>.
+                        Each column's upstream dependencies and transformations are recorded for full traceability.
+                    </p>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Granularity</div>
+                            <div class="info-value">Column-level tracking</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Node Types</div>
+                            <div class="info-value">SOURCE, TRANSFORM, OUTPUT</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Transform Types</div>
+                            <div class="info-value">SELECT, FILTER, JOIN, AGGREGATE, SQL, PYTHON</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Export Format</div>
+                            <div class="info-value">JSON with graph structure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Logs Tab -->
+        {% if log_lines %}
+        <div id="tab-logs" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="material-icons">description</span>
+                    Pipeline Logs
+                </h1>
+                <p class="page-subtitle">Last 200 lines of pipeline execution logs</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <div class="log-viewer">
+                        {% for line in log_lines %}
+                        <div class="log-line">{{ line|trim }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function switchTab(ev, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+            const selectedTab = document.getElementById('tab-' + tabName);
+            if (selectedTab) selectedTab.classList.add('active');
+
+            if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleJobCard(ev) {
+            const card = ev.currentTarget.closest('.job-card');
+            if (card) card.classList.toggle('expanded');
+        }
+
+        function switchInnerTab(ev, tabId) {
+            ev.stopPropagation();
+            const cardBody = ev.currentTarget.closest('.job-card-body');
+            if (!cardBody) return;
+
+            // Deactivate tabs within THIS card only
+            cardBody.querySelectorAll('.inner-tab').forEach(t => t.classList.remove('active'));
+            cardBody.querySelectorAll('.inner-tab-content').forEach(c => c.classList.remove('active'));
+
+            // Activate clicked tab + its content inside THIS card
+            ev.currentTarget.classList.add('active');
+            const target = cardBody.querySelector('#' + CSS.escape(tabId));
+            if (target) target.classList.add('active');
+        }
+
+        function filterNav(query) {
+            const items = document.querySelectorAll('.nav-item[data-search]');
+            query = (query || '').toLowerCase();
+
+            items.forEach(item => {
+                const searchText = item.getAttribute('data-search').toLowerCase();
+                const text = item.textContent.toLowerCase();
+                item.style.display = (searchText.includes(query) || text.includes(query)) ? 'flex' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

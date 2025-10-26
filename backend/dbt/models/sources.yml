@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  # Define your source tables here - these come from the extract/stage pipeline phases
+  # Example:
+  # - name: staging
+  #   description: "Staged tables from the pipeline"
+  #   schema: staging
+  #   tables:
+  #     - name: in_your_table_name
+  #       description: "Description of your source table"
+  #     - name: in_another_table
+  #       description: "Another source table"

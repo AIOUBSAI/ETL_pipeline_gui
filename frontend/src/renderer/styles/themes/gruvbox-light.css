@@ -1,0 +1,63 @@
+/* Gruvbox Light Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #9d0006;
+  --ctp-flamingo: #af3a03;
+  --ctp-pink: #8f3f71;
+  --ctp-mauve: #8f3f71;
+  --ctp-red: #cc241d;
+  --ctp-maroon: #9d0006;
+  --ctp-peach: #d65d0e;
+  --ctp-yellow: #d79921;
+  --ctp-green: #79740e;
+  --ctp-teal: #427b58;
+  --ctp-sky: #076678;
+  --ctp-sapphire: #427b58;
+  --ctp-blue: #076678;
+  --ctp-lavender: #8f3f71;
+
+  /* Text Colors */
+  --ctp-text: #3c3836;
+  --ctp-subtext1: #504945;
+  --ctp-subtext0: #665c54;
+  --ctp-overlay2: #7c6f64;
+  --ctp-overlay1: #928374;
+  --ctp-overlay0: #a89984;
+  --ctp-surface2: #d5c4a1;
+  --ctp-surface1: #ebdbb2;
+  --ctp-surface0: #f2e5bc;
+
+  /* Background Colors */
+  --ctp-base: #fbf1c7;
+  --ctp-mantle: #f2e5bc;
+  --ctp-crust: #ebdbb2;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #fbf1c7;
+  --ctp-light-mantle: #f2e5bc;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(0, 0, 0, 0.08);
+  --ctp-white-05: rgba(0, 0, 0, 0.05);
+  --ctp-white-03: rgba(0, 0, 0, 0.03);
+  --ctp-white-10: rgba(0, 0, 0, 0.1);
+
+  --ctp-mauve-15: rgba(143, 63, 113, 0.15);
+  --ctp-mauve-10: rgba(143, 63, 113, 0.1);
+
+  --ctp-red-20: rgba(204, 36, 29, 0.2);
+  --ctp-red-15: rgba(204, 36, 29, 0.15);
+  --ctp-red-25: rgba(204, 36, 29, 0.25);
+
+  --ctp-green-10: rgba(121, 116, 14, 0.1);
+  --ctp-green-15: rgba(121, 116, 14, 0.15);
+  --ctp-green-25: rgba(121, 116, 14, 0.25);
+
+  --ctp-blue-15: rgba(7, 102, 120, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,14 @@
+# Order data source extraction (Excel format)
+extract_orders:
+  stage: extract
+  runner: excel_reader
+  depends_on: []
+  input:
+    path: "{DATA_DIR}"
+    files: "orders.xlsx"
+    sheets: ["Orders"]
+  processors:
+    - normalize_headers
+    - drop_empty_rows
+  output:
+    table: orders

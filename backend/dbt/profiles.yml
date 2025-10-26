@@ -1,0 +1,11 @@
+pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: out/db/warehouse.duckdb
+      schema: landing  # All models go to landing schema by default
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet

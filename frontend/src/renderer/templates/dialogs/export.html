@@ -1,0 +1,29 @@
+<!-- Export Dialog -->
+<div class="dialog-overlay" id="dialog-export">
+  <div class="dialog dialog-small">
+    <div class="dialog-header">
+      <h2 class="dialog-title">Export graph</h2>
+      <button class="dialog-close" data-close="export" data-icon="X" data-icon-size="16">
+      </button>
+    </div>
+    <div class="dialog-content">
+      <p>Export your project graph data to a file.</p>
+      <div class="dialog-setting-item">
+        <label class="dialog-label">
+          <span class="dialog-label-text">Export Format</span>
+        </label>
+        <div class="dialog-control">
+          <select class="input-select">
+            <option value="json">JSON</option>
+            <option value="csv">CSV</option>
+            <option value="xml">XML</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" data-close="export">Cancel</button>
+      <button class="btn btn-primary">Export</button>
+    </div>
+  </div>
+</div>

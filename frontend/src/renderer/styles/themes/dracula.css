@@ -1,0 +1,63 @@
+/* Dracula Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #ff79c6;
+  --ctp-flamingo: #ff79c6;
+  --ctp-pink: #ff79c6;
+  --ctp-mauve: #bd93f9;
+  --ctp-red: #ff5555;
+  --ctp-maroon: #ff6e6e;
+  --ctp-peach: #ffb86c;
+  --ctp-yellow: #f1fa8c;
+  --ctp-green: #50fa7b;
+  --ctp-teal: #8be9fd;
+  --ctp-sky: #8be9fd;
+  --ctp-sapphire: #8be9fd;
+  --ctp-blue: #6272a4;
+  --ctp-lavender: #bd93f9;
+
+  /* Text Colors */
+  --ctp-text: #f8f8f2;
+  --ctp-subtext1: #e6e6e1;
+  --ctp-subtext0: #d4d4ce;
+  --ctp-overlay2: #9ca3af;
+  --ctp-overlay1: #7b8394;
+  --ctp-overlay0: #6272a4;
+  --ctp-surface2: #565869;
+  --ctp-surface1: #4a4d5e;
+  --ctp-surface0: #3e4153;
+
+  /* Background Colors */
+  --ctp-base: #282a36;
+  --ctp-mantle: #21222c;
+  --ctp-crust: #191a21;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #eff1f5;
+  --ctp-light-mantle: #e6e9ef;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(255, 255, 255, 0.08);
+  --ctp-white-05: rgba(255, 255, 255, 0.05);
+  --ctp-white-03: rgba(255, 255, 255, 0.03);
+  --ctp-white-10: rgba(255, 255, 255, 0.1);
+
+  --ctp-mauve-15: rgba(189, 147, 249, 0.15);
+  --ctp-mauve-10: rgba(189, 147, 249, 0.1);
+
+  --ctp-red-20: rgba(255, 85, 85, 0.2);
+  --ctp-red-15: rgba(255, 85, 85, 0.15);
+  --ctp-red-25: rgba(255, 85, 85, 0.25);
+
+  --ctp-green-10: rgba(80, 250, 123, 0.1);
+  --ctp-green-15: rgba(80, 250, 123, 0.15);
+  --ctp-green-25: rgba(80, 250, 123, 0.25);
+
+  --ctp-blue-15: rgba(98, 114, 164, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

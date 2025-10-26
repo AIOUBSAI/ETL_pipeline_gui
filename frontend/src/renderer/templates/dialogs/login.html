@@ -1,0 +1,35 @@
+<!-- Login Dialog -->
+<div class="dialog-overlay" id="dialog-login">
+  <div class="dialog dialog-small">
+    <div class="dialog-header">
+      <h2 class="dialog-title">Login</h2>
+      <button class="dialog-close" data-close="login" data-icon="X" data-icon-size="16">
+      </button>
+    </div>
+    <div class="dialog-content">
+      <p>Enter your credentials. Admin access required for Editor, Database, and Reports.</p>
+      <form id="login-form">
+        <div class="dialog-setting-item">
+          <label class="dialog-label">
+            <span class="dialog-label-text">Username</span>
+          </label>
+          <div class="dialog-control">
+            <input type="text" id="login-username" class="input-text" placeholder="Enter username" autocomplete="username" required />
+          </div>
+        </div>
+        <div class="dialog-setting-item">
+          <label class="dialog-label">
+            <span class="dialog-label-text">Password</span>
+          </label>
+          <div class="dialog-control">
+            <input type="password" id="login-password" class="input-text" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" id="login-cancel-button">Cancel</button>
+      <button class="btn btn-primary" id="login-button">Login</button>
+    </div>
+  </div>
+</div>

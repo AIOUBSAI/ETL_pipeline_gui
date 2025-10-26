@@ -1,0 +1,132 @@
+/* App Container */
+.app-container {
+  display: flex;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  background-color: var(--ctp-mantle);
+  border-right: 1px solid var(--ctp-white-08);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              min-width 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              max-width 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              border-right 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
+}
+
+.sidebar.sidebar-collapsed {
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  pointer-events: none;
+  border-right: 1px solid transparent;
+}
+
+.sidebar-header {
+  padding: 20px 16px 16px 16px;
+  border-bottom: 1px solid var(--ctp-white-05);
+}
+
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ctp-subtext0);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--ctp-subtext1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  text-align: left;
+  font-weight: 400;
+}
+
+.nav-item:hover {
+  background-color: var(--ctp-white-05);
+  color: var(--ctp-text);
+}
+
+.nav-item.active {
+  background-color: var(--ctp-mauve-15);
+  color: var(--ctp-mauve);
+}
+
+.nav-icon {
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--ctp-white-05);
+}
+
+.version-info {
+  font-size: 12px;
+  color: var(--ctp-overlay0);
+  text-align: center;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ctp-base);
+}
+
+.view {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view.active {
+  display: flex;
+}
+
+.view-header {
+  padding: 32px 32px 24px 32px;
+  background: transparent;
+}
+
+.view-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ctp-text);
+  margin-bottom: 4px;
+}
+
+.view-subtitle {
+  font-size: 14px;
+  color: var(--ctp-subtext0);
+}

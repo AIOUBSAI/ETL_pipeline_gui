@@ -1,0 +1,54 @@
+metadata:
+  name: "Sample ETL Transformations"
+  description: "Transform clean data into analytics tables"
+  version: "1.0"
+  author: "ETL Pipeline"
+
+transformations:
+  # Step 1: Create value tier analysis
+  - name: "create_value_tiers"
+    description: "Categorize records by value tiers"
+    schema: "analytics"
+    tables_created: ["value_tiers"]
+    depends_on: ["staging.clean_data"]
+    tags: ["analytics", "tiers"]
+    sql: |
+      CREATE OR REPLACE TABLE analytics.value_tiers AS
+      SELECT
+          id,
+          category,
+          adjusted_value,
+          timestamp,
+          CASE
+              WHEN adjusted_value < 50 THEN 'Low'
+              WHEN adjusted_value < 100 THEN 'Medium'
+              WHEN adjusted_value < 150 THEN 'High'
+              ELSE 'Premium'
+          END as value_tier,
+          CURRENT_TIMESTAMP as processed_at
+      FROM staging.clean_data
+      WHERE adjusted_value IS NOT NULL;
+
+  # Step 2: Create advanced category metrics
+  - name: "create_category_metrics"
+    description: "Calculate advanced metrics per category"
+    schema: "analytics"
+    tables_created: ["category_metrics_detailed"]
+    depends_on: ["staging.clean_data", "staging.category_summary"]
+    tags: ["analytics", "metrics"]
+    sql: |
+      CREATE OR REPLACE TABLE analytics.category_metrics_detailed AS
+      SELECT
+          cs.category,
+          cs.record_count,
+          cs.avg_value,
+          cs.total_value,
+          COUNT(DISTINCT cd.id) as distinct_ids,
+          STDDEV(cd.adjusted_value) as stddev_value,
+          MIN(cd.adjusted_value) as min_value,
+          MAX(cd.adjusted_value) as max_value,
+          CURRENT_TIMESTAMP as processed_at
+      FROM staging.category_summary cs
+      LEFT JOIN staging.clean_data cd ON cs.category = cd.category
+      GROUP BY cs.category, cs.record_count, cs.avg_value, cs.total_value
+      ORDER BY cs.total_value DESC;

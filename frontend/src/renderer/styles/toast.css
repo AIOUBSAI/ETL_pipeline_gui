@@ -1,0 +1,137 @@
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--ctp-base);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 12px;
+  padding: 20px 24px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 20px 60px var(--ctp-black-60);
+  animation: notificationFadeIn 0.3s ease;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--ctp-base);
+  backdrop-filter: blur(4px);
+  z-index: -1;
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ctp-surface1);
+}
+
+.toast-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast-close {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  color: var(--ctp-subtext0);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  background-color: var(--ctp-red-20);
+  color: var(--ctp-red);
+}
+
+.toast-content {
+  color: var(--ctp-subtext0);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.toast-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.toast.success .toast-title {
+  color: var(--ctp-green);
+}
+
+.toast.error .toast-title {
+  color: var(--ctp-red);
+}
+
+.toast.info .toast-title {
+  color: var(--ctp-blue);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+@keyframes notificationFadeIn {
+  from {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes notificationFadeOut {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+}

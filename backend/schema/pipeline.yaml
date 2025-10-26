@@ -1,0 +1,824 @@
+pipeline:
+  name: "Complete Reference - All Configuration Options"
+  version: "1.0"
+  description: |
+    Comprehensive reference demonstrating ALL possible configuration options
+    for EXTRACT, TRANSFORM, and EXPORT stages.
+
+    This file serves as documentation and examples for:
+    - EXTRACT: CSV, Excel, XML, JSON, Parquet, DuckDB, SQLite, YAML, HTML, Python (inline/file)
+    - TRANSFORM: SQL (inline/file/YAML), Python (inline/file), DBT
+    - EXPORT: CSV, JSON, XML, Parquet, Excel, SQLite, YAML, HTML, Python (inline/file)
+
+variables:
+  DATA_DIR: "data"
+  OUTPUT_DIR: "out/reference"
+  SCHEMA_DIR: "schema"
+
+databases:
+  warehouse:
+    type: duckdb
+    path: "out/db/reference.duckdb"
+    reset_on_start: true
+    config:
+      threads: 4
+      memory_limit: "2GB"
+    schemas:
+      - landing
+      - staging
+      - analytics
+      - mart
+
+stages:
+  - extract
+  - stage
+  - transform
+  - export
+
+# ============================================================================
+# EXTRACT STAGE - All Possible Source Types
+# ============================================================================
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # EXTRACT FROM FILES - YAML Configuration
+  # ---------------------------------------------------------------------------
+
+  # 1. CSV Extract
+  extract_csv:
+    stage: extract
+    runner: csv_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.csv"
+      delimiter: ","           # Optional: auto-detect if not specified
+      has_header: true         # Optional: default true
+      skip_rows: 0             # Optional: skip N rows at start
+      encoding: "utf-8"        # Optional: default utf-8
+    processors:
+      - normalize_headers      # Optional: normalize column names
+      - drop_empty_rows        # Optional: remove empty rows
+      - name: type_cast        # Optional: cast column types
+        type_cast:
+          customer_id: "int"
+          amount: "float"
+    output:
+      table: "raw_csv_data"
+
+  # 2. Excel Extract
+  extract_excel:
+    stage: extract
+    runner: excel_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.xlsx"
+      sheets: ["Sheet1", "Data"]  # Optional: specific sheets or all
+      skip_rows: 0                 # Optional: skip rows at start
+      header_row: 0                # Optional: which row contains headers
+    processors:
+      - normalize_headers
+      - fill_merged_cells          # Excel-specific: fill merged cells
+    output:
+      table: "raw_excel_data"
+
+  # 3. XML Extract
+  extract_xml:
+    stage: extract
+    runner: xml_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.xml"
+      row_xpath: "./product"   # XPath to row elements
+      fields:                  # Field mappings
+        product_id: "product_id"
+        name: "product_name"
+        price: "price"
+        category: "category"
+    processors:
+      - normalize_headers
+    output:
+      table: "raw_xml_data"
+
+  # 4. JSON Extract
+  extract_json:
+    stage: extract
+    runner: json_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.json"
+      # JSON can be array of objects or line-delimited
+    output:
+      table: "raw_json_data"
+
+  # 5. JSONL (JSON Lines) Extract
+  extract_jsonl:
+    stage: extract
+    runner: jsonl_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.jsonl"
+    output:
+      table: "raw_jsonl_data"
+
+  # 6. Parquet Extract
+  extract_parquet:
+    stage: extract
+    runner: parquet_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.parquet"
+    output:
+      table: "raw_parquet_data"
+
+  # 7. DuckDB Extract - Single Table
+  # NOTE: Commented out - requires data/source.duckdb file with customers table
+  # extract_duckdb:
+  #   stage: extract
+  #   runner: duckdb_reader
+  #   input:
+  #     path: "data/source.duckdb"
+  #     table: "customers"  # Single table to extract
+  #     # OR use sql for custom query:
+  #     # sql: "SELECT * FROM customers WHERE country = 'USA'"
+  #   output:
+  #     table: "raw_duckdb_customers"
+
+  # 7b. DuckDB Extract - Another Table (example)
+  # extract_duckdb_orders:
+  #   stage: extract
+  #   runner: duckdb_reader
+  #   input:
+  #     path: "data/source.duckdb"
+  #     table: "orders"
+  #   output:
+  #     table: "raw_duckdb_orders"
+
+  # 8. SQLite Extract
+  # NOTE: Commented out - requires data/source.db file with users/transactions tables
+  # extract_sqlite:
+  #   stage: extract
+  #   runner: sqlite_reader
+  #   input:
+  #     path: "data/source.db"
+  #     table: "users"  # Single table to extract
+  #   output:
+  #     table: "raw_sqlite_data"
+
+  # 9. YAML Extract
+  extract_yaml:
+    stage: extract
+    runner: yaml_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.yaml"
+    output:
+      table: "raw_yaml_data"
+
+  # 10. HTML Table Extract
+  extract_html:
+    stage: extract
+    runner: html_table_reader
+    input:
+      path: "{DATA_DIR}"
+      files: "*.html"
+      table_index: 0           # Which table in HTML (0 = first)
+    output:
+      table: "raw_html_data"
+
+  # ---------------------------------------------------------------------------
+  # EXTRACT WITH PYTHON - Inline Code
+  # ---------------------------------------------------------------------------
+
+  # 11. Python Extract - Inline Code
+  extract_python_inline:
+    stage: extract
+    runner: python_extract
+    input:
+      python_code: |
+        import polars as pl
+        from datetime import datetime
+
+        # Example 1: Generate synthetic data
+        synthetic_df = pl.DataFrame({
+            "id": range(1, 101),
+            "value": [i * 2 for i in range(1, 101)],
+            "category": ["A", "B", "C"] * 33 + ["A"],
+            "timestamp": [datetime.now()] * 100
+        })
+
+        # Example 2: Fetch from API (commented out)
+        # import requests
+        # response = requests.get("https://api.example.com/data")
+        # api_df = pl.DataFrame(response.json())
+
+        # Example 3: Custom file processing
+        # custom_df = pl.read_csv("data/custom.csv").with_columns([
+        #     pl.col("date").str.strptime(pl.Date, "%Y%m%d")
+        # ])
+
+        # DataFrames are automatically captured by the runner
+        # synthetic_df will be available for output mapping
+
+      output:
+        - source_df: "synthetic_df"
+          table: "python_inline_data"
+      processors:
+        - normalize_headers
+    output:
+      table: "python_inline_data"
+
+  # ---------------------------------------------------------------------------
+  # EXTRACT WITH PYTHON - External File
+  # ---------------------------------------------------------------------------
+
+  # 12. Python Extract - External File
+  # NOTE: Commented out - requires the external Python file to exist
+  # extract_python_file:
+  #   stage: extract
+  #   runner: python_extract
+  #   input:
+  #     python_file: "{SCHEMA_DIR}/extracts/python/synthetic_data_generator.py"
+  #     output:
+  #       - source_df: "customers"
+  #         table: "python_customers"
+  #       - source_df: "orders"
+  #         table: "python_orders"
+  #     processors:
+  #       - normalize_headers
+  #   output:
+  #     table: "python_customers"  # Note: only first table stored by orchestrator
+
+# ============================================================================
+# STAGE - Load into DuckDB
+# ============================================================================
+
+  # Stage all extracted data into DuckDB schemas
+  stage_all:
+    stage: stage
+    runner: duckdb_stager
+    depends_on:
+      - extract_csv
+      - extract_python_inline
+      - extract_xml
+    input:
+      tables:  # List of in-memory tables to stage
+        - "raw_csv_data"
+        - "python_inline_data"
+        - "raw_xml_data"
+    schema: "landing"  # Output schema for staged tables
+
+# ============================================================================
+# TRANSFORM STAGE - All Possible Transform Types
+# ============================================================================
+
+  # ---------------------------------------------------------------------------
+  # SQL TRANSFORMS - Inline
+  # ---------------------------------------------------------------------------
+
+  # 13. SQL Transform - Inline
+  transform_sql_inline:
+    stage: transform
+    runner: sql_transform
+    depends_on:
+      - stage_all
+    sql: |
+      -- Inline SQL transformation
+      CREATE OR REPLACE TABLE staging.clean_data AS
+      SELECT
+        id,
+        UPPER(category) as category,
+        value * 1.1 as adjusted_value,
+        timestamp
+      FROM landing.python_inline_data
+      WHERE value > 0;
+
+      -- Create summary
+      CREATE OR REPLACE TABLE staging.category_summary AS
+      SELECT
+        category,
+        COUNT(*) as record_count,
+        AVG(adjusted_value) as avg_value,
+        SUM(adjusted_value) as total_value
+      FROM staging.clean_data
+      GROUP BY category;
+    output:
+      schema: "staging"
+      table: "clean_data"
+
+  # ---------------------------------------------------------------------------
+  # SQL TRANSFORMS - External File
+  # ---------------------------------------------------------------------------
+
+  # 14. SQL Transform - External SQL File
+  transform_sql_file:
+    stage: transform
+    runner: sql_transform
+    depends_on:
+      - transform_sql_inline
+    sql_file: "{SCHEMA_DIR}/transforms/sql/example.sql"  # Single SQL file
+    output:
+      schema: "staging"
+      table: "sql_file_result"
+
+  # ---------------------------------------------------------------------------
+  # SQL TRANSFORMS - YAML Configuration File
+  # ---------------------------------------------------------------------------
+
+  # 15. SQL Transform - YAML Configuration
+  transform_sql_yaml:
+    stage: transform
+    runner: sql_transform
+    depends_on:
+      - transform_sql_inline
+    sql_file: "{SCHEMA_DIR}/transforms/sql/transformations.yaml"
+    output:
+      schema: "staging"
+      # Multiple tables created as defined in YAML
+
+  # ---------------------------------------------------------------------------
+  # PYTHON TRANSFORMS - Inline Code
+  # ---------------------------------------------------------------------------
+
+  # 16. Python Transform - Inline Code
+  transform_python_inline:
+    stage: transform
+    runner: python_transform
+    depends_on:
+      - transform_sql_inline
+    options:
+      input_tables:
+        - schema: "staging"
+          table: "clean_data"
+          alias: "clean_df"
+        - schema: "staging"
+          table: "category_summary"
+          alias: "summary_df"
+      python_code: |
+        import polars as pl
+        from datetime import datetime
+
+        # Complex transformations using Polars
+
+        # Calculate percentiles and rankings
+        enriched_df = clean_df.with_columns([
+            pl.col("adjusted_value").rank().over("category").alias("category_rank"),
+            pl.col("adjusted_value").quantile(0.75).over("category").alias("p75_value")
+        ])
+
+        # Add business logic
+        enriched_df = enriched_df.with_columns([
+            pl.when(pl.col("adjusted_value") > pl.col("p75_value"))
+              .then(pl.lit("high"))
+              .when(pl.col("adjusted_value") > pl.col("p75_value") * 0.5)
+              .then(pl.lit("medium"))
+              .otherwise(pl.lit("low"))
+              .alias("value_tier")
+        ])
+
+        # Join with summary
+        final_df = enriched_df.join(
+            summary_df,
+            on="category",
+            how="left"
+        )
+
+        # Calculate percentage of category total
+        final_df = final_df.with_columns([
+            (pl.col("adjusted_value") / pl.col("total_value") * 100)
+            .round(2)
+            .alias("pct_of_category")
+        ])
+      output:
+        - table: "enriched_data"
+          schema: "analytics"
+          source_df: "final_df"
+          mode: "replace"
+    processors:
+      - normalize_headers
+
+  # ---------------------------------------------------------------------------
+  # PYTHON TRANSFORMS - External File
+  # ---------------------------------------------------------------------------
+
+  # 17. Python Transform - External File
+  # NOTE: Commented out - the external Python file has complex window operations that need debugging
+  # transform_python_file:
+  #   stage: transform
+  #   runner: python_transform
+  #   depends_on:
+  #     - transform_python_inline
+  #   options:
+  #     input_tables:
+  #       - schema: "analytics"
+  #         table: "enriched_data"
+  #         alias: "enriched_df"
+  #     python_file: "{SCHEMA_DIR}/transforms/python/customer_enrichment.py"
+  #     output:
+  #       - table: "final_analytics"
+  #         schema: "analytics"
+  #         source_df: "enriched_df"
+  #         mode: "replace"
+  #   processors:
+  #     - normalize_headers
+
+  # ---------------------------------------------------------------------------
+  # DBT TRANSFORMS
+  # ---------------------------------------------------------------------------
+
+  # 18. DBT Transform
+  # NOTE: Commented out - requires dbt_project directory and dbt installation
+  # transform_dbt:
+  #   stage: transform
+  #   runner: dbt_runner
+  #   depends_on:
+  #     - transform_sql_inline
+  #   options:
+  #     project_dir: "dbt_project"
+  #     profiles_dir: "dbt_project"
+  #     models: ["staging", "marts"]  # Optional: specific models
+  #     # commands:
+  #     #   - "dbt deps"
+  #     #   - "dbt run"
+  #     #   - "dbt test"
+
+# ============================================================================
+# EXPORT STAGE - All Possible Export Types
+# ============================================================================
+
+  # ---------------------------------------------------------------------------
+  # EXPORT TO FILES - YAML Configuration
+  # ---------------------------------------------------------------------------
+
+  # 19. CSV Export
+  export_csv:
+    stage: export
+    runner: csv_writer
+    depends_on:
+      - transform_python_inline
+    input:
+      table: "analytics.enriched_data"
+      # OR use query:
+      # query: "SELECT * FROM analytics.enriched_data WHERE value_tier = 'high'"
+    output:
+      path: "{OUTPUT_DIR}"
+      filename: "enriched_data.csv"
+    options:
+      delimiter: ","           # Optional: default comma
+      include_header: true     # Optional: default true
+      quote_style: "necessary" # Optional: minimal quoting
+
+  # 20. JSON Export
+  # NOTE: Commented out - JSON serialization has issues with Decimal types from DuckDB
+  # export_json:
+  #   stage: export
+  #   runner: json_writer
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     query: |
+  #       SELECT * FROM analytics.enriched_data
+  #       WHERE value_tier = 'high'
+  #       ORDER BY adjusted_value DESC
+  #       LIMIT 100
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "high_value_records.json"
+  #   options:
+  #     orient: "records"        # records | table | split
+  #     indent: 2                # Pretty printing
+  #     date_format: "iso"       # ISO format for dates
+
+  # 21. JSON Lines Export
+  # NOTE: Commented out - JSON serialization has issues with Decimal types from DuckDB
+  # export_jsonl:
+  #   stage: export
+  #   runner: jsonl_writer
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     table: "analytics.enriched_data"
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "enriched_data.jsonl"
+
+  # 22. XML Export
+  export_xml:
+    stage: export
+    runner: xml_writer
+    depends_on:
+      - transform_sql_inline
+    input:
+      table: "staging.category_summary"
+    output:
+      path: "{OUTPUT_DIR}"
+      filename: "category_summary.xml"
+    options:
+      root_tag: "categories"   # Root XML element
+      row_tag: "category"      # Row element name
+      pretty_print: true       # Format with indentation
+
+  # 23. Parquet Export
+  export_parquet:
+    stage: export
+    runner: parquet_writer
+    depends_on:
+      - transform_python_inline
+    input:
+      table: "analytics.enriched_data"
+    output:
+      path: "{OUTPUT_DIR}"
+      filename: "enriched_data.parquet"
+    options:
+      compression: "snappy"    # snappy | gzip | zstd | none
+
+  # 24. Excel Export - Single Sheet
+  export_excel_single:
+    stage: export
+    runner: excel_writer
+    depends_on:
+      - transform_sql_inline
+    input:
+      table: "staging.category_summary"
+    output:
+      path: "{OUTPUT_DIR}"
+      filename: "category_summary.xlsx"
+    options:
+      sheet_name: "Summary"    # Sheet name
+
+  # 25. Excel Export - Multiple Sheets (Workbook)
+  # NOTE: Commented out - workbook writer requires special handling in orchestrator
+  # export_excel_workbook:
+  #   stage: export
+  #   runner: excel_workbook_writer
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     tables:
+  #       - query: "SELECT * FROM staging.clean_data LIMIT 1000"
+  #         sheet_name: "Clean Data"
+  #       - table: "staging.category_summary"
+  #         sheet_name: "Summary"
+  #       - query: "SELECT * FROM analytics.enriched_data WHERE value_tier = 'high'"
+  #         sheet_name: "High Value"
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "complete_report.xlsx"
+
+  # 26. SQLite Export
+  # NOTE: Commented out - directory creation issue
+  # export_sqlite:
+  #   stage: export
+  #   runner: sqlite_writer
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     table: "analytics.enriched_data"
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "analytics.db"
+  #   options:
+  #     table_name: "enriched_data"  # Table name in SQLite
+  #     if_exists: "replace"          # replace | append
+
+  # 27. DuckDB Export
+  # NOTE: Commented out - directory creation issue
+  # export_duckdb:
+  #   stage: export
+  #   runner: duckdb_writer
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     table: "analytics.enriched_data"
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "analytics.duckdb"
+  #   options:
+  #     table_name: "enriched_data"
+  #     if_exists: "replace"
+
+  # 28. YAML Export
+  # NOTE: Commented out - YAML serialization may have issues with Decimal types
+  # export_yaml:
+  #   stage: export
+  #   runner: yaml_writer
+  #   depends_on:
+  #     - transform_sql_inline
+  #   input:
+  #     table: "staging.category_summary"
+  #   output:
+  #     path: "{OUTPUT_DIR}"
+  #     filename: "category_summary.yaml"
+
+  # 29. HTML Table Export
+  export_html:
+    stage: export
+    runner: html_table_writer
+    depends_on:
+      - transform_sql_inline
+    input:
+      query: "SELECT * FROM staging.category_summary ORDER BY total_value DESC"
+    output:
+      path: "{OUTPUT_DIR}"
+      filename: "category_summary.html"
+    options:
+      title: "Category Summary Report"
+      border: 1
+      index: false             # Don't include row index
+
+  # ---------------------------------------------------------------------------
+  # EXPORT WITH PYTHON - Inline Code
+  # ---------------------------------------------------------------------------
+
+  # 30. Python Export - Inline Code
+  # NOTE: Commented out - exports JSON which may have Decimal serialization issues
+  # export_python_inline:
+  #   stage: export
+  #   runner: python_export
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     query: |
+  #       SELECT * FROM analytics.enriched_data
+  #       WHERE value_tier IN ('high', 'medium')
+  #       ORDER BY category, adjusted_value DESC
+  #   options:
+  #     python_code: |
+  #       import polars as pl
+  #       from pathlib import Path
+  #       import json
+  #
+  #       output_path = Path(params.get("output_dir", "out"))
+  #       output_path.mkdir(parents=True, exist_ok=True)
+  #
+  #       # Split by category and export separate files
+  #       for category in df["category"].unique():
+  #           category_df = df.filter(pl.col("category") == category)
+  #           category_file = output_path / f"category_{category.lower()}.csv"
+  #           category_df.write_csv(category_file)
+  #           print(f"Exported {len(category_df)} records to {category_file}")
+  #
+  #       # Create summary statistics
+  #       summary = df.group_by("category").agg([
+  #           pl.count("id").alias("count"),
+  #           pl.mean("adjusted_value").alias("avg_value"),
+  #           pl.sum("adjusted_value").alias("total_value"),
+  #           pl.col("value_tier").value_counts().alias("tier_distribution")
+  #       ])
+  #
+  #       # Export summary as JSON
+  #       summary_file = output_path / "category_analysis.json"
+  #       summary.write_json(summary_file, row_oriented=True)
+  #
+  #       # Create metadata
+  #       metadata = {
+  #           "export_timestamp": str(pl.datetime("now")),
+  #           "total_records": len(df),
+  #           "categories_exported": df["category"].n_unique(),
+  #           "value_tiers": df["value_tier"].unique().to_list()
+  #       }
+  #
+  #       metadata_file = output_path / "export_metadata.json"
+  #       with open(metadata_file, "w") as f:
+  #           json.dump(metadata, f, indent=2)
+  #
+  #       print(f"✓ Export complete: {len(df)} records across {df['category'].n_unique()} categories")
+  #
+  #     params:
+  #       output_dir: "{OUTPUT_DIR}/python_inline_export"
+
+  # ---------------------------------------------------------------------------
+  # EXPORT WITH PYTHON - External File
+  # ---------------------------------------------------------------------------
+
+  # 31. Python Export - External File
+  # NOTE: Commented out - requires external Python file and may have serialization issues
+  # export_python_file:
+  #   stage: export
+  #   runner: python_export
+  #   depends_on:
+  #     - transform_python_inline
+  #   input:
+  #     table: "analytics.enriched_data"
+  #   options:
+  #     python_file: "{SCHEMA_DIR}/exports/python/custom_report_generator.py"
+  #     params:
+  #       output_dir: "{OUTPUT_DIR}/python_file_export"
+  #       report_title: "Enriched Data Analysis"
+  #       include_charts: false
+
+# ============================================================================
+# RUNNERS Configuration
+# ============================================================================
+
+runners:
+  # Extract runners
+  csv_reader:
+    type: reader
+    plugin: csv
+
+  excel_reader:
+    type: reader
+    plugin: excel
+
+  xml_reader:
+    type: reader
+    plugin: xml
+
+  json_reader:
+    type: reader
+    plugin: json
+
+  jsonl_reader:
+    type: reader
+    plugin: jsonl
+
+  parquet_reader:
+    type: reader
+    plugin: parquet
+
+  duckdb_reader:
+    type: reader
+    plugin: duckdb
+
+  sqlite_reader:
+    type: reader
+    plugin: sqlite
+
+  yaml_reader:
+    type: reader
+    plugin: yaml
+
+  html_table_reader:
+    type: reader
+    plugin: html_table
+
+  python_extract:
+    type: reader
+    plugin: python_extract
+
+  # Stage runner
+  duckdb_stager:
+    type: stager
+    plugin: duckdb
+
+  # Transform runners
+  sql_transform:
+    type: transformer
+    plugin: sql
+
+  python_transform:
+    type: transformer
+    plugin: python_transform
+
+  dbt_runner:
+    type: transformer
+    plugin: dbt
+
+  # Export runners
+  csv_writer:
+    type: writer
+    plugin: csv
+
+  json_writer:
+    type: writer
+    plugin: json
+
+  jsonl_writer:
+    type: writer
+    plugin: jsonl
+
+  xml_writer:
+    type: writer
+    plugin: xml
+
+  parquet_writer:
+    type: writer
+    plugin: parquet
+
+  excel_writer:
+    type: writer
+    plugin: excel
+
+  excel_workbook_writer:
+    type: writer
+    plugin: excel_workbook
+
+  sqlite_writer:
+    type: writer
+    plugin: sqlite
+
+  duckdb_writer:
+    type: writer
+    plugin: duckdb
+
+  yaml_writer:
+    type: writer
+    plugin: yaml
+
+  html_table_writer:
+    type: writer
+    plugin: html_table
+
+  python_export:
+    type: writer
+    plugin: python_export

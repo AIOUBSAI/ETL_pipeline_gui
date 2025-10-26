@@ -1,0 +1,125 @@
+/* Custom Title Bar */
+.title-bar {
+  height: 40px;
+  background-color: var(--ctp-base);
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-app-region: drag;
+  user-select: none;
+  position: relative;
+}
+
+.title-bar-sidebar-section {
+  width: 240px;
+  height: 100%;
+  background-color: var(--ctp-mantle);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.title-bar-sidebar-section::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--ctp-white-08);
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.title-bar-sidebar-section.collapsed {
+  width: 0;
+  background-color: var(--ctp-base);
+}
+
+.title-bar-sidebar-section.collapsed::after {
+  opacity: 0;
+}
+
+.sidebar-toggle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  background-color: transparent;
+  border: none;
+  color: var(--ctp-subtext0);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: none;
+  -webkit-app-region: no-drag;
+  position: absolute;
+  left: 12px;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background-color: transparent;
+  color: var(--ctp-subtext0);
+}
+
+.sidebar-toggle:active {
+  background-color: transparent;
+  color: var(--ctp-subtext0);
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ctp-subtext0);
+}
+
+.app-icon {
+  color: var(--ctp-mauve);
+}
+
+.title-bar-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.title-bar-button {
+  width: 46px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: var(--ctp-subtext0);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.title-bar-button:hover {
+  background-color: var(--ctp-white-08);
+}
+
+.title-bar-button.settings-btn {
+  margin-right: 8px;
+  border-right: 1px solid var(--ctp-white-08);
+}
+
+.title-bar-button.settings-btn:hover {
+  background-color: var(--ctp-mauve-15);
+  color: var(--ctp-mauve);
+}
+
+.title-bar-button.close-btn:hover {
+  background-color: var(--ctp-red);
+  color: var(--ctp-base);
+}

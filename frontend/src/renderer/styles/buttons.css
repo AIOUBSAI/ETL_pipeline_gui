@@ -1,0 +1,51 @@
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--ctp-mauve);
+  color: var(--ctp-base);
+}
+
+.btn-primary:hover {
+  background-color: var(--ctp-lavender);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-text);
+}
+
+.btn-secondary:hover {
+  background-color: var(--ctp-surface1);
+}
+
+.btn-success {
+  background-color: var(--ctp-green);
+  color: var(--ctp-base);
+}
+
+.btn-success:hover {
+  background-color: var(--ctp-teal);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

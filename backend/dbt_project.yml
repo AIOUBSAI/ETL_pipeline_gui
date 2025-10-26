@@ -1,0 +1,21 @@
+name: 'pipeline'
+version: '1.0.0'
+config-version: 2
+
+profile: 'pipeline'
+
+model-paths: ["dbt/models"]
+analysis-paths: ["dbt/analyses"]
+test-paths: ["dbt/tests"]
+seed-paths: ["dbt/seeds"]
+macro-paths: ["dbt/macros"]
+snapshot-paths: ["dbt/snapshots"]
+
+target-path: "dbt/target"
+clean-targets:
+  - "dbt/target"
+  - "dbt/dbt_packages"
+
+models:
+  pipeline:
+    +materialized: table

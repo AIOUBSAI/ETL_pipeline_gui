@@ -1,0 +1,140 @@
+/**
+ * Custom Theme Template for Project Launcher
+ *
+ * INSTRUCTIONS:
+ * 1. Replace the color values below with your preferred colors
+ * 2. Keep the CSS variable names exactly as they are
+ * 3. Use hex colors (#RRGGBB) or rgba() format
+ * 4. Test your theme before importing
+ * 5. Save this file and import it through Plugins > Theme Plugins
+ *
+ * COLOR GUIDELINES:
+ * - Base colors: Background and surface colors (darkest to lightest)
+ * - Text colors: Foreground text colors (darkest to lightest)
+ * - Accent colors: UI highlights and interactive elements
+ * - Semantic colors: Status indicators (red=error, green=success, etc.)
+ */
+
+:root {
+  /* ============================================
+     BASE COLORS - Background and Surface Colors
+     ============================================ */
+
+  /* Main background color - darkest background */
+  --ctp-base: #282a36;
+
+  /* Secondary background - slightly lighter than base */
+  --ctp-mantle: #21222c;
+
+  /* Tertiary background - darkest UI elements */
+  --ctp-crust: #191a21;
+
+  /* Surface layers - progressively lighter */
+  --ctp-surface0: #3e4153;
+  --ctp-surface1: #4a4d5e;
+  --ctp-surface2: #565869;
+
+  /* ============================================
+     TEXT COLORS - Foreground and Text
+     ============================================ */
+
+  /* Primary text color - brightest text */
+  --ctp-text: #f8f8f2;
+
+  /* Secondary text - slightly dimmer */
+  --ctp-subtext1: #e6e6e1;
+
+  /* Tertiary text - more subtle */
+  --ctp-subtext0: #d4d4ce;
+
+  /* Overlay text colors - for muted text */
+  --ctp-overlay2: #9ca3af;
+  --ctp-overlay1: #7b8394;
+  --ctp-overlay0: #6272a4;
+
+  /* ============================================
+     ACCENT COLORS - Interactive Elements
+     ============================================ */
+
+  /* Primary accent - main interactive color */
+  --ctp-mauve: #bd93f9;
+  --ctp-lavender: #bd93f9;
+
+  /* Blue family - secondary interactions */
+  --ctp-blue: #6272a4;
+  --ctp-sapphire: #8be9fd;
+  --ctp-sky: #8be9fd;
+
+  /* Cyan/Teal - info and highlights */
+  --ctp-teal: #8be9fd;
+
+  /* ============================================
+     SEMANTIC COLORS - Status and Feedback
+     ============================================ */
+
+  /* Error/Danger - red family */
+  --ctp-red: #ff5555;
+  --ctp-maroon: #ff6e6e;
+
+  /* Warning - orange/yellow family */
+  --ctp-peach: #ffb86c;
+  --ctp-yellow: #f1fa8c;
+
+  /* Success - green family */
+  --ctp-green: #50fa7b;
+
+  /* Special highlights */
+  --ctp-pink: #ff79c6;
+  --ctp-rosewater: #ff79c6;
+  --ctp-flamingo: #ff79c6;
+
+  /* ============================================
+     ALPHA/OPACITY VARIANTS
+     (Advanced - for overlays and subtle effects)
+     ============================================ */
+
+  /* White overlays */
+  --ctp-white-03: rgba(255, 255, 255, 0.03);
+  --ctp-white-05: rgba(255, 255, 255, 0.05);
+  --ctp-white-08: rgba(255, 255, 255, 0.08);
+  --ctp-white-10: rgba(255, 255, 255, 0.1);
+
+  /* Black overlays */
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+
+  /* Accent color overlays */
+  --ctp-mauve-10: rgba(189, 147, 249, 0.1);
+  --ctp-mauve-15: rgba(189, 147, 249, 0.15);
+
+  --ctp-red-15: rgba(255, 85, 85, 0.15);
+  --ctp-red-20: rgba(255, 85, 85, 0.2);
+  --ctp-red-25: rgba(255, 85, 85, 0.25);
+
+  --ctp-green-10: rgba(80, 250, 123, 0.1);
+  --ctp-green-15: rgba(80, 250, 123, 0.15);
+  --ctp-green-25: rgba(80, 250, 123, 0.25);
+
+  --ctp-blue-15: rgba(98, 114, 164, 0.15);
+
+  /* ============================================
+     THEME PREVIEW COLORS
+     (Optional - for theme selector preview)
+     ============================================ */
+
+  --ctp-light-base: #eff1f5;
+  --ctp-light-mantle: #e6e9ef;
+}
+
+/* ============================================
+   THEME METADATA (DO NOT REMOVE)
+   Used by the app to identify your theme
+   ============================================ */
+
+/* @theme-name: My Custom Theme */
+/* @theme-author: Your Name */
+/* @theme-category: dark */
+/* @theme-description: A custom theme created from template */

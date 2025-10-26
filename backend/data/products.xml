@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+    <product>
+        <product_id>101</product_id>
+        <product_name>Laptop Pro 15</product_name>
+        <category>Electronics</category>
+        <price>1299.99</price>
+        <stock>45</stock>
+    </product>
+    <product>
+        <product_id>102</product_id>
+        <product_name>Wireless Mouse</product_name>
+        <category>Electronics</category>
+        <price>29.99</price>
+        <stock>150</stock>
+    </product>
+    <product>
+        <product_id>103</product_id>
+        <product_name>Office Chair Deluxe</product_name>
+        <category>Furniture</category>
+        <price>349.99</price>
+        <stock>30</stock>
+    </product>
+    <product>
+        <product_id>104</product_id>
+        <product_name>Desk Lamp LED</product_name>
+        <category>Furniture</category>
+        <price>59.99</price>
+        <stock>80</stock>
+    </product>
+    <product>
+        <product_id>105</product_id>
+        <product_name>Notebook A4</product_name>
+        <category>Stationery</category>
+        <price>4.99</price>
+        <stock>500</stock>
+    </product>
+    <product>
+        <product_id>106</product_id>
+        <product_name>Mechanical Keyboard</product_name>
+        <category>Electronics</category>
+        <price>149.99</price>
+        <stock>65</stock>
+    </product>
+    <product>
+        <product_id>107</product_id>
+        <product_name>Standing Desk</product_name>
+        <category>Furniture</category>
+        <price>599.99</price>
+        <stock>20</stock>
+    </product>
+    <product>
+        <product_id>108</product_id>
+        <product_name>Pen Set Premium</product_name>
+        <category>Stationery</category>
+        <price>24.99</price>
+        <stock>200</stock>
+    </product>
+</products>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Launcher</title>
+
+  <!-- Early theme loading script - runs before body renders -->
+  <script>
+    (function() {
+      // Get saved theme from localStorage
+      const savedTheme = localStorage.getItem('selectedTheme') || 'catppuccin-frappe';
+
+      // Theme definitions (matching theme.js)
+      const themes = {
+        'catppuccin-latte': { file: 'styles/themes/catppuccin-latte.css', category: 'light' },
+        'catppuccin-frappe': { file: 'styles/themes/catppuccin-frappe.css', category: 'dark' },
+        'catppuccin-mocha': { file: 'styles/themes/catppuccin-mocha.css', category: 'dark' },
+        'catppuccin-macchiato': { file: 'styles/themes/catppuccin-macchiato.css', category: 'dark' },
+        'gruvbox-light': { file: 'styles/themes/gruvbox-light.css', category: 'light' },
+        'gruvbox-dark': { file: 'styles/themes/gruvbox-dark.css', category: 'dark' },
+        'solarized-light': { file: 'styles/themes/solarized-light.css', category: 'light' },
+        'solarized-dark': { file: 'styles/themes/solarized-dark.css', category: 'dark' },
+        'dracula': { file: 'styles/themes/dracula.css', category: 'dark' },
+        'nord': { file: 'styles/themes/nord.css', category: 'dark' },
+        'one-dark': { file: 'styles/themes/one-dark.css', category: 'dark' },
+        'tokyo-night': { file: 'styles/themes/tokyo-night.css', category: 'dark' }
+      };
+
+      const themeData = themes[savedTheme] || themes['catppuccin-frappe'];
+
+      // Inject theme stylesheet link
+      const link = document.createElement('link');
+      link.id = 'theme-stylesheet';
+      link.rel = 'stylesheet';
+      link.href = themeData.file;
+      document.head.appendChild(link);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/command-palette.css">
+  <link rel="stylesheet" href="styles/keyboard-shortcuts.css">
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <h1 class="splash-title">Project Launcher</h1>
+      <div class="splash-loader">
+        <div class="spinner"></div>
+      </div>
+      <p class="splash-text">Loading application...</p>
+    </div>
+  </div>
+
+  <!-- Custom Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-sidebar-section collapsed" id="title-bar-sidebar-section">
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle Sidebar" data-icon="Menu" data-icon-size="18">
+      </button>
+    </div>
+    <div class="title-bar-controls">
+      <div class="menu-container">
+        <button class="title-bar-button menu-btn" id="menu-btn" title="Menu" data-icon="MoreVertical" data-icon-size="16">
+        </button>
+        <div class="dropdown-menu" id="dropdown-menu">
+          <!-- Admin Status (shown when logged in) -->
+          <div class="dropdown-item disabled hidden" id="admin-status-item">
+            <span data-icon="User" data-icon-size="16"></span>
+            <span style="color: var(--color-success);"></span>
+          </div>
+
+          <!-- Login (shown when not logged in) -->
+          <button class="dropdown-item" id="login-menu-item" data-dialog="login">
+            <span data-icon="LogIn" data-icon-size="16"></span>
+            <span>Login</span>
+          </button>
+
+          <!-- Logout (shown when logged in) -->
+          <button class="dropdown-item hidden" id="logout-menu-item" data-action="logout">
+            <span data-icon="LogOut" data-icon-size="16"></span>
+            <span>Logout</span>
+          </button>
+
+          <div class="dropdown-separator"></div>
+
+          <button class="dropdown-item" data-dialog="settings">
+            <span data-icon="Settings" data-icon-size="16"></span>
+            <span>Settings</span>
+          </button>
+          <button class="dropdown-item" data-dialog="themes">
+            <span data-icon="Moon" data-icon-size="16"></span>
+            <span>Themes</span>
+          </button>
+          <button class="dropdown-item" data-dialog="plugins">
+            <span data-icon="Package" data-icon-size="16"></span>
+            <span>Plugins</span>
+          </button>
+          <button class="dropdown-item" data-dialog="bug-report">
+            <span data-icon="Bug" data-icon-size="16"></span>
+            <span>Bug report</span>
+          </button>
+        </div>
+      </div>
+      <button class="title-bar-button" id="minimize-btn" title="Minimize" data-icon="Minus" data-icon-size="12">
+      </button>
+      <button class="title-bar-button" id="maximize-btn" title="Maximize" data-icon="Square" data-icon-size="12">
+      </button>
+      <button class="title-bar-button close-btn" id="close-btn" title="Close" data-icon="X" data-icon-size="12">
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar sidebar-collapsed">
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon" data-icon="LayoutDashboard" data-icon-size="18"></span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="editor">
+          <span class="nav-icon" data-icon="PencilLine" data-icon-size="18"></span>
+          <span>Editor</span>
+        </button>
+        <button class="nav-item" data-view="database">
+          <span class="nav-icon" data-icon="Database" data-icon-size="18"></span>
+          <span>Database</span>
+        </button>
+        <button class="nav-item" data-view="reports">
+          <span class="nav-icon" data-icon="BarChart3" data-icon-size="18"></span>
+          <span>Reports</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="version-info">Loading...</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard View -->
+      <div class="view active" id="dashboard-view">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">Project Launcher</h1>
+        </div>
+
+        <!-- Control Bar -->
+        <div class="control-bar">
+          <div class="control-left">
+            <button class="icon-btn" id="select-folder-btn" title="Change root folder" data-icon="Folder" data-icon-size="16">
+            </button>
+
+            <select class="project-select" id="project-select">
+              <option value="">Select a folder...</option>
+            </select>
+
+            <button class="icon-btn reload-btn" id="reload-btn" title="Reload folders from root" data-icon="RefreshCw" data-icon-size="16">
+            </button>
+          </div>
+
+          <div class="control-buttons">
+            <button class="icon-btn" id="run-btn" title="Run" disabled data-icon="Play" data-icon-size="16">
+            </button>
+            <button class="icon-btn" id="stop-btn" title="Stop" disabled data-icon="Square" data-icon-size="16">
+            </button>
+          </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="logs-section">
+          <div class="logs-header">
+            <h2 class="logs-title">Logs</h2>
+            <div class="log-filters">
+              <button class="filter-btn icon-btn active" data-filter="all" title="All" data-icon="Circle" data-icon-size="16">
+              </button>
+              <button class="filter-btn icon-btn" data-filter="info" title="Info" data-icon="Info" data-icon-size="16">
+              </button>
+              <button class="filter-btn icon-btn" data-filter="success" title="Success" data-icon="CheckCircle2" data-icon-size="16">
+              </button>
+              <button class="filter-btn icon-btn" data-filter="warning" title="Warning" data-icon="AlertTriangle" data-icon-size="16">
+              </button>
+              <button class="filter-btn icon-btn" data-filter="error" title="Error" data-icon="XCircle" data-icon-size="16">
+              </button>
+              <button class="icon-btn" id="clear-logs-btn" title="Clear logs" data-icon="Trash2" data-icon-size="16">
+              </button>
+            </div>
+          </div>
+
+          <div class="logs-container" id="logs-container">
+            <div class="empty-state-small">
+              <span data-icon="FileText" data-icon-size="32"></span>
+              <p>No Logs Yet</p>
+              <small>Select a folder and run to see logs</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor View -->
+      <div class="view" id="editor-view">
+        <div class="view-header">
+          <h1 class="view-title">Editor</h1>
+          <p class="view-subtitle">Code editor and file management</p>
+        </div>
+        <div class="empty-state">
+          <span data-icon="PencilLine" data-icon-size="48"></span>
+          <h3>Editor Coming Soon</h3>
+          <p>This page is under construction.</p>
+        </div>
+      </div>
+
+      <!-- Database View -->
+      <div class="view" id="database-view">
+        <div class="view-header">
+          <h1 class="view-title">Database</h1>
+          <p class="view-subtitle">Database management and queries</p>
+        </div>
+        <div class="empty-state">
+          <span data-icon="Database" data-icon-size="48"></span>
+          <h3>Database Coming Soon</h3>
+          <p>This page is under construction.</p>
+        </div>
+      </div>
+
+      <!-- Reports View -->
+      <div class="view" id="reports-view">
+        <div class="view-header">
+          <h1 class="view-title">Reports</h1>
+          <p class="view-subtitle">Analytics and reporting tools</p>
+        </div>
+        <div class="empty-state">
+          <span data-icon="BarChart3" data-icon-size="48"></span>
+          <h3>Reports Coming Soon</h3>
+          <p>This page is under construction.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Help Button -->
+  <div class="help-button-container">
+    <button class="help-button" id="help-button" title="Help" data-icon="HelpCircle" data-icon-size="20">
+    </button>
+    <div class="help-menu" id="help-menu">
+      <button class="help-menu-item" data-action="handbook">
+        <span data-icon="BookOpen" data-icon-size="16"></span>
+        <span>Handbook</span>
+      </button>
+      <button class="help-menu-item" data-action="keyboard-shortcuts">
+        <span data-icon="Command" data-icon-size="16"></span>
+        <span>Keyboard shortcuts</span>
+      </button>
+      <button class="help-menu-item" data-action="documentation">
+        <span data-icon="FileText" data-icon-size="16"></span>
+        <span>Documentation</span>
+      </button>
+      <div class="help-menu-separator"></div>
+      <button class="help-menu-item" data-action="report-bug">
+        <span data-icon="Bug" data-icon-size="16"></span>
+        <span>Report bug</span>
+      </button>
+      <button class="help-menu-item" data-action="request-feature">
+        <span data-icon="Lightbulb" data-icon-size="16"></span>
+        <span>Request feature</span>
+      </button>
+      <button class="help-menu-item" data-action="submit-feedback">
+        <span data-icon="MessageSquare" data-icon-size="16"></span>
+        <span>Submit feedback</span>
+      </button>
+      <div class="help-menu-separator"></div>
+      <button class="help-menu-item" data-action="release-notes">
+        <span data-icon="BarChart3" data-icon-size="16"></span>
+        <span>Release notes</span>
+        <span class="help-version-number">Loading...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Dialogs will be loaded dynamically from templates -->
+
+  <!-- Load app with ES6 modules -->
+  <script type="module" src="index.js"></script>
+</body>
+</html>

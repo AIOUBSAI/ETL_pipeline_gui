@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  # Define your models and tests here
+  # Example:
+  #
+  # - name: example_model
+  #   description: "Description of what this model does"
+  #   columns:
+  #     - name: column_a
+  #       description: "Description of column A"
+  #       tests:
+  #         - not_null
+  #         - unique
+  #     - name: column_b
+  #       description: "Description of column B"
+  #       tests:
+  #         - not_null
+  #     - name: record_count
+  #       description: "Count of records"
+  #       tests:
+  #         - not_null

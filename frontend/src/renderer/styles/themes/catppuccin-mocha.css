@@ -1,0 +1,63 @@
+/* Catppuccin Mocha Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
+
+  /* Text Colors */
+  --ctp-text: #cdd6f4;
+  --ctp-subtext1: #bac2de;
+  --ctp-subtext0: #a6adc8;
+  --ctp-overlay2: #9399b2;
+  --ctp-overlay1: #7f849c;
+  --ctp-overlay0: #6c7086;
+  --ctp-surface2: #585b70;
+  --ctp-surface1: #45475a;
+  --ctp-surface0: #313244;
+
+  /* Background Colors */
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #eff1f5;
+  --ctp-light-mantle: #e6e9ef;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(255, 255, 255, 0.08);
+  --ctp-white-05: rgba(255, 255, 255, 0.05);
+  --ctp-white-03: rgba(255, 255, 255, 0.03);
+  --ctp-white-10: rgba(255, 255, 255, 0.1);
+
+  --ctp-mauve-15: rgba(203, 166, 247, 0.15);
+  --ctp-mauve-10: rgba(203, 166, 247, 0.1);
+
+  --ctp-red-20: rgba(243, 139, 168, 0.2);
+  --ctp-red-15: rgba(243, 139, 168, 0.15);
+  --ctp-red-25: rgba(243, 139, 168, 0.25);
+
+  --ctp-green-10: rgba(166, 227, 161, 0.1);
+  --ctp-green-15: rgba(166, 227, 161, 0.15);
+  --ctp-green-25: rgba(166, 227, 161, 0.25);
+
+  --ctp-blue-15: rgba(137, 180, 250, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

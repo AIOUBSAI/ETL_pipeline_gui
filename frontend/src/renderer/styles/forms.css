@@ -1,0 +1,23 @@
+/* Textarea */
+.input-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 8px;
+  color: var(--ctp-text);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.15s ease;
+  min-height: 120px;
+}
+
+.input-textarea:focus {
+  outline: none;
+  border-color: var(--ctp-mauve);
+}
+
+.input-textarea::placeholder {
+  color: var(--ctp-overlay0);
+}

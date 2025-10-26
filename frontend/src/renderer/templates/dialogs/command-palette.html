@@ -1,0 +1,47 @@
+<div class="dialog-overlay" id="dialog-command-palette">
+  <div class="command-palette-dialog">
+    <div class="command-palette-header">
+      <div class="command-palette-search-wrapper">
+        <span class="command-palette-search-icon" data-icon="Search" data-icon-size="16"></span>
+        <input
+          type="text"
+          id="command-palette-input"
+          class="command-palette-input"
+          placeholder="Type a command or search..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <kbd class="command-palette-kbd">Esc</kbd>
+      </div>
+    </div>
+
+    <div class="command-palette-body">
+      <div class="command-palette-results" id="command-palette-results">
+        <!-- Results will be dynamically populated -->
+      </div>
+
+      <div class="command-palette-empty" id="command-palette-empty" style="display: none;">
+        <span data-icon="Search" data-icon-size="32"></span>
+        <p>No commands found</p>
+        <small>Try a different search term</small>
+      </div>
+    </div>
+
+    <div class="command-palette-footer">
+      <div class="command-palette-hints">
+        <div class="command-palette-hint">
+          <kbd>↑</kbd><kbd>↓</kbd>
+          <span>Navigate</span>
+        </div>
+        <div class="command-palette-hint">
+          <kbd>Enter</kbd>
+          <span>Execute</span>
+        </div>
+        <div class="command-palette-hint">
+          <kbd>Esc</kbd>
+          <span>Close</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

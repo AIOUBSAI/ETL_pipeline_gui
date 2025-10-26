@@ -1,0 +1,473 @@
+/* ================================
+   UNIFIED LAYOUT STYLES
+   ================================ */
+
+/* Dashboard split view container */
+.dashboard-split {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Projects Panel (Left) */
+.projects-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ctp-mantle);
+  border-right: 1px solid var(--ctp-white-08);
+  overflow: hidden;
+}
+
+/* Logs Panel (Right) */
+.logs-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ctp-base);
+  overflow: hidden;
+}
+
+/* Panel Headers */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: var(--ctp-crust);
+  border-bottom: 1px solid var(--ctp-white-08);
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 0;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Projects Toolbar */
+.projects-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--ctp-mantle);
+  border-bottom: none; /* solid var(--ctp-white-05);*/
+  flex-shrink: 0;
+}
+
+/* Projects List */
+.projects-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* Project Item in List */
+.project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--ctp-surface0);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 2px solid transparent;
+}
+
+.project-item:hover {
+  background-color: var(--ctp-surface1);
+  border-color: var(--ctp-mauve);
+  transform: translateX(2px);
+}
+
+.project-item.running {
+  border-color: var(--ctp-green);
+  background-color: var(--ctp-green-10);
+}
+
+.project-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ctp-text);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-path {
+  font-size: 12px;
+  color: var(--ctp-overlay0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Running Projects Section */
+.running-projects-section {
+  background-color: var(--ctp-mantle);
+  border-bottom: none; /* s1px solid var(--ctp-white-08); */
+  padding: 12px 16px;
+  flex-shrink: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.running-projects-section .section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ctp-subtext0);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.running-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.running-project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--ctp-surface0);
+  border-radius: 6px;
+  border-left: 3px solid var(--ctp-green);
+}
+
+.running-project-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ctp-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.running-project-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Logs Toolbar */
+.logs-toolbar {
+  padding: 8px 16px;
+  background-color: var(--ctp-base);
+  border-bottom: none; /*1px solid var(--ctp-white-05);*/
+  flex-shrink: 0;
+}
+
+/* Logs Container */
+#dashboard-view .logs-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  background-color: var(--ctp-base);
+}
+
+/* Empty State Small */
+#dashboard-view .empty-state-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--ctp-overlay0);
+  background-color: var(--ctp-base);
+  min-height: 200px;
+}
+
+.empty-state-small svg {
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state-small p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ctp-subtext0);
+  margin-bottom: 6px;
+}
+
+.empty-state-small small {
+  font-size: 12px;
+  color: var(--ctp-overlay0);
+}
+
+/* Button Variants */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+  height: auto;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+/* Small button for compact layouts */
+.btn-xs {
+  padding: 4px 8px;
+  font-size: 12px;
+  height: auto;
+  min-width: auto;
+}
+
+/* Responsive adjustments for dashboard */
+@media (max-width: 1200px) {
+  .dashboard-split {
+    grid-template-columns: 35% 65%;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .projects-panel {
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: none; /*1px solid var(--ctp-white-08);*/
+  }
+}
+
+/* ================================
+   SIMPLIFIED DASHBOARD STYLES
+   ================================ */
+
+/* Page Header */
+#dashboard-view .page-header {
+  padding: 24px 32px 16px 32px;
+  background-color: var(--ctp-base);
+  border-bottom: none; /*1px solid var(--ctp-white-08);*/
+}
+#dashboard-view .page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 0;
+}
+
+/* Control Bar */
+#dashboard-view .control-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--ctp-base);
+  border-bottom: none; /*1px solid var(--ctp-white-08);*/
+}
+
+#dashboard-view .control-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.project-select {
+  flex: 1;
+  max-width: 350px;
+  padding: 7px 10px;
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-white-10);
+  border-radius: 6px;
+  color: var(--ctp-text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.project-select:hover {
+  border-color: var(--ctp-mauve);
+  background-color: var(--ctp-surface1);
+}
+
+.project-select:focus {
+  border-color: var(--ctp-mauve);
+  box-shadow: 0 0 0 2px var(--ctp-mauve-15);
+}
+
+.project-select option {
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-text);
+  padding: 6px;
+}
+
+#dashboard-view .control-buttons {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+/* Icon-only buttons */
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-white-10);
+  border-radius: 6px;
+  color: var(--ctp-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background-color: var(--ctp-surface1);
+  border-color: var(--ctp-mauve);
+  transform: scale(1.05);
+}
+
+.icon-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-btn.has-changes {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  animation: pulse-save 2s infinite;
+}
+
+@keyframes pulse-save {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.icon-btn.reload-btn {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.icon-btn.reload-btn:hover:not(:disabled) {
+  background-color: var(--ctp-blue-15);
+  border-color: var(--ctp-blue);
+  color: var(--ctp-blue);
+}
+
+#run-btn:not(:disabled) {
+  background-color: var(--ctp-green-15);
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
+}
+
+#run-btn:hover:not(:disabled) {
+  background-color: var(--ctp-green-25);
+  border-color: var(--ctp-green);
+}
+
+#stop-btn:not(:disabled) {
+  background-color: var(--ctp-red-15);
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+#stop-btn:hover:not(:disabled) {
+  background-color: var(--ctp-red-25);
+  border-color: var(--ctp-red);
+}
+
+#clear-logs-btn:hover:not(:disabled) {
+  background-color: var(--ctp-red-15);
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+/* Logs Section */
+#dashboard-view .logs-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--ctp-base);
+}
+
+#dashboard-view .logs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background-color: var(--ctp-base);
+  position: relative; /* so the pseudo-element positions relative to this */
+}
+
+/* Create a centered line underneath */
+#dashboard-view .logs-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 95%; /* line width */
+  height: 1px;
+  background-color: var(--ctp-white-08);
+  transform: translateX(-50%);
+}
+
+
+#dashboard-view .logs-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  margin: 0;
+}
+
+/* Main content without sidebar */
+.main-content {
+  width: 100%;
+}

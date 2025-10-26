@@ -1,0 +1,63 @@
+/* One Dark Theme */
+:root {
+  /* Base Colors */
+  --ctp-rosewater: #e06c75;
+  --ctp-flamingo: #d19a66;
+  --ctp-pink: #c678dd;
+  --ctp-mauve: #c678dd;
+  --ctp-red: #e06c75;
+  --ctp-maroon: #be5046;
+  --ctp-peach: #d19a66;
+  --ctp-yellow: #e5c07b;
+  --ctp-green: #98c379;
+  --ctp-teal: #56b6c2;
+  --ctp-sky: #61afef;
+  --ctp-sapphire: #61afef;
+  --ctp-blue: #61afef;
+  --ctp-lavender: #c678dd;
+
+  /* Text Colors */
+  --ctp-text: #abb2bf;
+  --ctp-subtext1: #9da5b4;
+  --ctp-subtext0: #8f98a9;
+  --ctp-overlay2: #7c8696;
+  --ctp-overlay1: #6b7583;
+  --ctp-overlay0: #5c6370;
+  --ctp-surface2: #4b5263;
+  --ctp-surface1: #3e4451;
+  --ctp-surface0: #353b45;
+
+  /* Background Colors */
+  --ctp-base: #282c34;
+  --ctp-mantle: #21252b;
+  --ctp-crust: #181a1f;
+
+  /* Theme Preview Gradients (Light theme colors) */
+  --ctp-light-base: #fafafa;
+  --ctp-light-mantle: #f0f0f0;
+
+  /* Alpha/Opacity Variants */
+  --ctp-white-08: rgba(255, 255, 255, 0.08);
+  --ctp-white-05: rgba(255, 255, 255, 0.05);
+  --ctp-white-03: rgba(255, 255, 255, 0.03);
+  --ctp-white-10: rgba(255, 255, 255, 0.1);
+
+  --ctp-mauve-15: rgba(198, 120, 221, 0.15);
+  --ctp-mauve-10: rgba(198, 120, 221, 0.1);
+
+  --ctp-red-20: rgba(224, 108, 117, 0.2);
+  --ctp-red-15: rgba(224, 108, 117, 0.15);
+  --ctp-red-25: rgba(224, 108, 117, 0.25);
+
+  --ctp-green-10: rgba(152, 195, 121, 0.1);
+  --ctp-green-15: rgba(152, 195, 121, 0.15);
+  --ctp-green-25: rgba(152, 195, 121, 0.25);
+
+  --ctp-blue-15: rgba(97, 175, 239, 0.15);
+
+  --ctp-black-50: rgba(0, 0, 0, 0.5);
+  --ctp-black-60: rgba(0, 0, 0, 0.6);
+  --ctp-black-30: rgba(0, 0, 0, 0.3);
+  --ctp-black-40: rgba(0, 0, 0, 0.4);
+  --ctp-black-20: rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,11 @@
+customer_id,customer_name,email,country,registration_date
+1,John Smith,john.smith@email.com,USA,2024-01-15
+2,Marie Dubois,marie.dubois@email.fr,France,2024-02-20
+3,Hans Mueller,hans.mueller@email.de,Germany,2024-01-28
+4,Sofia Garcia,sofia.garcia@email.es,Spain,2024-03-10
+5,Yuki Tanaka,yuki.tanaka@email.jp,Japan,2024-02-05
+6,Emma Wilson,emma.wilson@email.co.uk,UK,2024-01-12
+7,Lucas Silva,lucas.silva@email.br,Brazil,2024-03-22
+8,Anna Kowalski,anna.kowalski@email.pl,Poland,2024-02-18
+9,Ahmed Hassan,ahmed.hassan@email.eg,Egypt,2024-03-05
+10,Isabella Rossi,isabella.rossi@email.it,Italy,2024-01-30

@@ -1,0 +1,151 @@
+<!-- Themes Dialog -->
+<div class="dialog-overlay" id="dialog-themes">
+  <div class="dialog dialog-xlarge settings-dialog">
+    <!-- Close button at top-right -->
+    <button class="settings-dialog-close" data-close="themes" data-icon="X" data-icon-size="20">
+    </button>
+
+    <div class="settings-layout">
+      <!-- Themes Sidebar -->
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-header">
+          <h2 class="settings-main-title">Themes</h2>
+        </div>
+        <nav class="settings-nav">
+          <button class="settings-nav-item active" data-theme-tab="browser">
+            <span data-icon="LayoutGrid" data-icon-size="18"></span>
+            <span>Theme Browser</span>
+          </button>
+          <button class="settings-nav-item" data-theme-tab="creator">
+            <span data-icon="Paintbrush" data-icon-size="18"></span>
+            <span>Create Theme</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Themes Content -->
+      <main class="settings-content">
+        <!-- Theme Browser Tab -->
+        <div class="settings-tab active" id="theme-tab-browser">
+          <h2 class="settings-content-title">Theme Browser</h2>
+
+          <!-- Search and Filter Bar -->
+          <div class="theme-search-bar">
+            <div class="search-box">
+              <span class="search-icon" data-icon="Search" data-icon-size="16"></span>
+              <input type="text" id="theme-search-input" placeholder="Search themes..." />
+            </div>
+            <div class="theme-filter-buttons">
+              <button class="filter-btn active" data-category="all" title="All themes" data-icon="Palette" data-icon-size="20">
+              </button>
+              <button class="filter-btn" data-category="light" title="Light themes" data-icon="Sun" data-icon-size="20">
+              </button>
+              <button class="filter-btn" data-category="dark" title="Dark themes" data-icon="Moon" data-icon-size="20">
+              </button>
+            </div>
+          </div>
+
+          <!-- Current Theme Info -->
+          <div class="current-theme-info">
+            <span class="current-theme-label">Current theme:</span>
+            <strong id="current-theme-name">Loading...</strong>
+          </div>
+
+          <!-- Themes Grid -->
+          <div class="themes-grid-container">
+            <div class="themes-grid" id="themes-grid">
+              <!-- Themes will be populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme Creator Tab -->
+        <div class="settings-tab" id="theme-tab-creator">
+          <h2 class="settings-content-title">Create Custom Theme</h2>
+          <p class="settings-group-desc" style="margin-bottom: 24px;">Design your own theme with custom colors using the visual editor below.</p>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Theme Information</h3>
+            </div>
+            <div class="theme-info-grid">
+              <div class="theme-info-field">
+                <label class="settings-label">Theme Name</label>
+                <input type="text" id="custom-theme-name" class="input-text input-text-compact" placeholder="My Custom Theme" />
+              </div>
+              <div class="theme-info-field">
+                <label class="settings-label">Theme Category</label>
+                <select id="theme-category-select" class="input-select input-select-compact">
+                  <option value="auto">Auto-detect from colors</option>
+                  <option value="light">Light Theme</option>
+                  <option value="dark">Dark Theme</option>
+                </select>
+              </div>
+            </div>
+            <small id="detected-category-hint" class="settings-desc" style="margin-top: 12px; display: block;">Detected as: <strong>Dark</strong></small>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Base Colors</h3>
+              <p class="settings-group-desc">Background and surface colors</p>
+            </div>
+            <div class="color-picker-container" id="base-colors">
+              <!-- Color pickers will be added dynamically -->
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Text Colors</h3>
+              <p class="settings-group-desc">Foreground and text colors</p>
+            </div>
+            <div class="color-picker-container" id="text-colors">
+              <!-- Color pickers will be added dynamically -->
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Accent Colors</h3>
+              <p class="settings-group-desc">Interactive element colors</p>
+            </div>
+            <div class="color-picker-container" id="accent-colors">
+              <!-- Color pickers will be added dynamically -->
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <h3 class="settings-group-title">Semantic Colors</h3>
+              <p class="settings-group-desc">Status and feedback colors</p>
+            </div>
+            <div class="color-picker-container" id="semantic-colors">
+              <!-- Color pickers will be added dynamically -->
+            </div>
+          </div>
+
+          <!-- Preview Panel -->
+          <div class="theme-preview-panel">
+            <h3 class="theme-preview-title">Preview</h3>
+            <div class="theme-preview-content" id="theme-preview">
+              <!-- Preview swatches will be added dynamically -->
+            </div>
+          </div>
+
+          <!-- Save Button -->
+          <div class="settings-row" style="margin-top: 24px; justify-content: flex-end;">
+            <button class="btn btn-secondary btn-compact" id="reset-theme-btn">
+              <span data-icon="RotateCcw" data-icon-size="16"></span>
+              <span>Reset</span>
+            </button>
+            <button class="btn btn-primary btn-compact" id="save-custom-theme-btn">
+              <span data-icon="Save" data-icon-size="16"></span>
+              <span>Save Theme</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

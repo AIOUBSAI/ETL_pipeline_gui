@@ -1,0 +1,29 @@
+{{
+    config(
+        materialized='table'
+    )
+}}
+
+-- Example DBT model template
+-- Copy this file to create your own model (remove .template extension)
+--
+-- Replace the following with your actual columns and logic:
+-- - source schema and table name
+-- - column names
+-- - WHERE conditions
+-- - aggregations
+--
+-- Documentation: https://docs.getdbt.com/
+
+SELECT
+    column_a,
+    column_b,
+    COUNT(*) as record_count,
+    MAX(column_c) as max_value,
+    MIN(column_c) as min_value,
+    CURRENT_TIMESTAMP as processed_at
+FROM {{ source('staging', 'in_source_table') }}
+WHERE column_a IS NOT NULL
+  AND column_b IS NOT NULL
+GROUP BY column_a, column_b
+HAVING COUNT(*) > 0
