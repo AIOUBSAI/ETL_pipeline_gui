@@ -17,16 +17,24 @@ let isDirty = false;
  * Open pipeline editor
  */
 export function openPipelineEditor(path, yamlContent) {
+  console.log('openPipelineEditor called', { path, contentLength: yamlContent?.length });
+
   currentPipelinePath = path;
   isDirty = false;
 
   try {
     // Parse YAML
+    console.log('Parsing YAML...');
     currentConfig = parseYAML(yamlContent);
+    console.log('Parsed config:', currentConfig);
 
+    console.log('Showing dialog...');
     showEditorDialog();
+    console.log('Rendering content...');
     renderEditorContent();
+    console.log('Editor opened successfully');
   } catch (error) {
+    console.error('Error opening editor:', error);
     handleError(error, 'Parse Pipeline');
   }
 }
@@ -35,29 +43,32 @@ export function openPipelineEditor(path, yamlContent) {
  * Show editor dialog
  */
 function showEditorDialog() {
+  console.log('showEditorDialog called');
+
   const existingDialog = document.getElementById('pipeline-editor-dialog');
   if (existingDialog) {
+    console.log('Removing existing dialog');
     existingDialog.remove();
   }
 
-  const dialog = document.createElement('div');
-  dialog.id = 'pipeline-editor-dialog';
-  dialog.className = 'dialog pipeline-editor-dialog';
-  dialog.innerHTML = `
-    <div class="dialog-overlay"></div>
-    <div class="dialog-content pipeline-editor-content">
+  console.log('Creating dialog element');
+  const wrapper = document.createElement('div');
+  wrapper.id = 'pipeline-editor-dialog';
+  wrapper.className = 'pipeline-editor-dialog';
+  console.log('Setting dialog HTML');
+  wrapper.innerHTML = `
+    <div class="dialog-overlay">
+      <div class="dialog pipeline-editor-content">
       <div class="pipeline-editor-header">
         <h2>Pipeline Editor</h2>
         <div class="pipeline-editor-actions">
-          <button class="btn-secondary" id="pipeline-validate-btn">
-            <span data-icon="CheckCircle" data-icon-size="16"></span>
-            Validate
+          <button class="icon-btn" id="pipeline-validate-btn" title="Validate Pipeline">
+            <span data-icon="CheckCircle" data-icon-size="18"></span>
           </button>
-          <button class="btn-primary" id="pipeline-save-btn">
-            <span data-icon="Save" data-icon-size="16"></span>
-            Save
+          <button class="icon-btn" id="pipeline-save-btn" title="Save Pipeline">
+            <span data-icon="Save" data-icon-size="18"></span>
           </button>
-          <button class="btn-icon" id="pipeline-close-btn">
+          <button class="icon-btn" id="pipeline-close-btn" title="Close">
             <span data-icon="X" data-icon-size="18"></span>
           </button>
         </div>
@@ -91,28 +102,41 @@ function showEditorDialog() {
           <!-- Content rendered here -->
         </div>
       </div>
+      </div>
     </div>
   `;
 
-  document.body.appendChild(dialog);
-  initializeIcons(dialog);
+  console.log('Appending wrapper to body');
+  document.body.appendChild(wrapper);
+  console.log('Wrapper appended, initializing icons');
+  initializeIcons(wrapper);
 
   // Event listeners
+  console.log('Adding event listeners');
   document.getElementById('pipeline-close-btn').addEventListener('click', closePipelineEditor);
   document.getElementById('pipeline-save-btn').addEventListener('click', savePipeline);
   document.getElementById('pipeline-validate-btn').addEventListener('click', validateCurrentPipeline);
 
   // Nav items
-  dialog.querySelectorAll('.pipeline-nav-item').forEach(item => {
+  wrapper.querySelectorAll('.pipeline-nav-item').forEach(item => {
     item.addEventListener('click', () => {
-      dialog.querySelectorAll('.pipeline-nav-item').forEach(i => i.classList.remove('active'));
+      wrapper.querySelectorAll('.pipeline-nav-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
       renderSection(item.dataset.section);
     });
   });
 
-  // Show dialog
-  setTimeout(() => dialog.classList.add('active'), 10);
+  // Show dialog by adding active class to overlay
+  console.log('Setting active class on overlay after delay');
+  setTimeout(() => {
+    const overlay = wrapper.querySelector('.dialog-overlay');
+    if (overlay) {
+      overlay.classList.add('active');
+      console.log('Overlay active class added');
+    } else {
+      console.error('Could not find dialog-overlay!');
+    }
+  }, 10);
 }
 
 /**
@@ -456,9 +480,10 @@ function closePipelineEditor() {
     return;
   }
 
-  const dialog = document.getElementById('pipeline-editor-dialog');
-  dialog?.classList.remove('active');
-  setTimeout(() => dialog?.remove(), 300);
+  const wrapper = document.getElementById('pipeline-editor-dialog');
+  const overlay = wrapper?.querySelector('.dialog-overlay');
+  overlay?.classList.remove('active');
+  setTimeout(() => wrapper?.remove(), 300);
 }
 
 /**

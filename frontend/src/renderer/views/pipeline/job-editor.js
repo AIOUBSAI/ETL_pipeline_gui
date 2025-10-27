@@ -194,6 +194,14 @@ function renderRunnerFields() {
     });
   }
 
+  // Options fields (for DBT, advanced transformers)
+  if (runnerConfig.options) {
+    html += '<h5>Options</h5>';
+    Object.entries(runnerConfig.options).forEach(([key, config]) => {
+      html += renderField('options', key, config, currentJobConfig.options?.[key]);
+    });
+  }
+
   // Processors
   if (runnerConfig.processors) {
     html += '<h5>Processors</h5>';
@@ -321,6 +329,7 @@ function saveJob() {
       depends_on: Array.from(document.querySelectorAll('.job-dependency:checked')).map(cb => cb.value),
       input: {},
       output: {},
+      options: {},
       processors: []
     };
 
@@ -374,6 +383,34 @@ function saveJob() {
         });
       }
 
+      // Options fields (for DBT, advanced transformers)
+      if (runnerConfig.options) {
+        Object.keys(runnerConfig.options).forEach(key => {
+          const field = document.getElementById(`job-options-${key}`);
+          if (field) {
+            let value = field.type === 'checkbox' ? field.checked : field.value;
+
+            // Parse arrays
+            if (runnerConfig.options[key].type === 'array' && typeof value === 'string') {
+              value = value.split(',').map(v => v.trim()).filter(Boolean);
+            }
+
+            // Parse objects
+            if (runnerConfig.options[key].type === 'object' && typeof value === 'string') {
+              try {
+                value = JSON.parse(value);
+              } catch (e) {
+                // Keep as string if invalid JSON
+              }
+            }
+
+            if (value !== '' && value !== undefined) {
+              job.options[key] = value;
+            }
+          }
+        });
+      }
+
       // Processors
       if (runnerConfig.processors) {
         const selectedProcessors = Array.from(document.querySelectorAll('.processor-checkbox:checked'))
@@ -381,6 +418,12 @@ function saveJob() {
         job.processors = selectedProcessors;
       }
     }
+
+    // Clean up empty objects
+    if (Object.keys(job.input).length === 0) delete job.input;
+    if (Object.keys(job.output).length === 0) delete job.output;
+    if (Object.keys(job.options).length === 0) delete job.options;
+    if (job.processors.length === 0) delete job.processors;
 
     // Update in parent editor
     updateJob(jobName, job);

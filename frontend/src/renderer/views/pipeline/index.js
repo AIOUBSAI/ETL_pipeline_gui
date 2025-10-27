@@ -18,10 +18,16 @@ export async function initializePipelineView() {
   await loadPipelines();
 }
 
+let listenersAttached = false;
+
 /**
  * Set up event listeners
  */
 function setupEventListeners() {
+  // Prevent duplicate listeners
+  if (listenersAttached) return;
+  listenersAttached = true;
+
   // New pipeline button
   const newBtn = document.getElementById('pipeline-new-btn');
   if (newBtn) {
@@ -42,8 +48,11 @@ function setupEventListeners() {
     });
   }
 
-  // Delegate click events for pipeline cards
-  document.addEventListener('click', handlePipelineActions);
+  // Delegate click events for pipeline cards (scoped to pipeline list)
+  const pipelineView = document.getElementById('pipeline-view');
+  if (pipelineView) {
+    pipelineView.addEventListener('click', handlePipelineActions);
+  }
 }
 
 /**
@@ -116,6 +125,9 @@ function createPipelineCard(pipeline) {
           <button class="icon-btn" data-action="edit" data-path="${pipeline.path}" title="Edit">
             <span data-icon="PencilLine" data-icon-size="14"></span>
           </button>
+          <button class="icon-btn" data-action="duplicate" data-path="${pipeline.path}" title="Duplicate">
+            <span data-icon="Copy" data-icon-size="14"></span>
+          </button>
           <button class="icon-btn" data-action="execute" data-path="${pipeline.path}" title="Run">
             <span data-icon="Play" data-icon-size="14"></span>
           </button>
@@ -148,12 +160,18 @@ async function handlePipelineActions(e) {
   const action = button.dataset.action;
   const path = button.dataset.path;
 
+  console.log('Pipeline action:', action, 'Path:', path);
+
   switch (action) {
     case 'edit':
+      console.log('Editing pipeline:', path);
       await editPipeline(path);
       break;
     case 'validate':
       await validatePipeline(path);
+      break;
+    case 'duplicate':
+      await duplicatePipeline(path);
       break;
     case 'execute':
       await executePipeline(path);
@@ -230,13 +248,20 @@ jobs: {}
  * Edit pipeline
  */
 async function editPipeline(path) {
+  console.log('editPipeline called with path:', path);
+
   const result = await withErrorHandling(
     async () => await window.electronAPI.pipeline.read(path),
     'Load Pipeline'
   );
 
+  console.log('Read result:', result);
+
   if (result && result.success) {
+    console.log('Opening editor with content length:', result.content?.length);
     openPipelineEditor(path, result.content);
+  } else {
+    console.error('Failed to read pipeline:', result);
   }
 }
 
@@ -256,14 +281,214 @@ async function validatePipeline(path) {
     } else {
       const errorCount = result.errors?.length || 0;
       const warningCount = result.warnings?.length || 0;
+
+      // Show detailed validation results in a dialog
+      showValidationResults(path, result);
+
       showToast(
-        `Validation failed: ${errorCount} errors, ${warningCount} warnings`,
+        `Validation failed: ${errorCount} errors, ${warningCount} warnings. Click for details.`,
         'error'
       );
-      console.error('Validation errors:', result.errors);
-      console.warn('Validation warnings:', result.warnings);
     }
   }
+}
+
+/**
+ * Show validation results dialog
+ */
+function showValidationResults(pipelinePath, results) {
+  const pipelineName = pipelinePath.split(/[/\\]/).pop();
+  const errors = results.errors || [];
+  const warnings = results.warnings || [];
+
+  const dialog = document.createElement('div');
+  dialog.className = 'dialog validation-results-dialog';
+  dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Validation Results: ${pipelineName}</h2>
+        <button class="btn-icon" id="validation-close-btn">
+          <span data-icon="X" data-icon-size="18"></span>
+        </button>
+      </div>
+      <div class="dialog-body">
+        ${errors.length > 0 ? `
+          <div class="validation-section">
+            <h3 class="validation-section-title error">
+              <span data-icon="XCircle" data-icon-size="18"></span>
+              Errors (${errors.length})
+            </h3>
+            <div class="validation-messages">
+              ${errors.map(err => `
+                <div class="validation-message error">
+                  <div class="validation-message-header">
+                    <strong>${err.job || 'General'}</strong>
+                    ${err.type ? `<span class="badge">${err.type}</span>` : ''}
+                  </div>
+                  <div class="validation-message-body">${err.message || err}</div>
+                  ${err.details ? `<div class="validation-message-details">${err.details}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${warnings.length > 0 ? `
+          <div class="validation-section">
+            <h3 class="validation-section-title warning">
+              <span data-icon="AlertTriangle" data-icon-size="18"></span>
+              Warnings (${warnings.length})
+            </h3>
+            <div class="validation-messages">
+              ${warnings.map(warn => `
+                <div class="validation-message warning">
+                  <div class="validation-message-header">
+                    <strong>${warn.job || 'General'}</strong>
+                    ${warn.type ? `<span class="badge">${warn.type}</span>` : ''}
+                  </div>
+                  <div class="validation-message-body">${warn.message || warn}</div>
+                  ${warn.details ? `<div class="validation-message-details">${warn.details}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+      <div class="dialog-footer">
+        <button class="btn-primary" id="validation-ok-btn">OK</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dialog);
+  initializeIcons(dialog);
+
+  const closeDialog = () => {
+    dialog.classList.remove('active');
+    setTimeout(() => dialog.remove(), 300);
+  };
+
+  dialog.querySelector('#validation-close-btn').addEventListener('click', closeDialog);
+  dialog.querySelector('#validation-ok-btn').addEventListener('click', closeDialog);
+
+  setTimeout(() => dialog.classList.add('active'), 10);
+}
+
+/**
+ * Dry run pipeline (validation + execution plan)
+ */
+async function dryRunPipeline(path) {
+  const result = await withErrorHandling(
+    async () => await window.electronAPI.pipeline.dryRun(path),
+    'Dry Run Pipeline',
+    { showLoading: true, loadingMessage: 'Running dry-run...' }
+  );
+
+  if (result) {
+    if (result.valid) {
+      showDryRunResults(path, result);
+    } else {
+      showValidationResults(path, result);
+      showToast('Pipeline has validation errors', 'error');
+    }
+  }
+}
+
+/**
+ * Show dry-run results dialog
+ */
+function showDryRunResults(pipelinePath, results) {
+  const pipelineName = pipelinePath.split(/[/\\]/).pop();
+  const jobs = results.jobs || [];
+  const stages = results.stages || [];
+
+  const dialog = document.createElement('div');
+  dialog.className = 'dialog dry-run-results-dialog';
+  dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Dry Run: ${pipelineName}</h2>
+        <button class="btn-icon" id="dry-run-close-btn">
+          <span data-icon="X" data-icon-size="18"></span>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="dry-run-summary">
+          <p><strong>Total Jobs:</strong> ${jobs.length}</p>
+          <p><strong>Stages:</strong> ${stages.join(' → ')}</p>
+        </div>
+
+        <h3>Execution Plan</h3>
+        <div class="execution-plan">
+          ${stages.map(stage => {
+            const stageJobs = jobs.filter(j => j.stage === stage);
+            return `
+              <div class="stage-group">
+                <h4 class="stage-title">
+                  <span data-icon="Layers" data-icon-size="16"></span>
+                  ${stage} (${stageJobs.length} jobs)
+                </h4>
+                <div class="stage-jobs">
+                  ${stageJobs.map(job => `
+                    <div class="job-item">
+                      <div class="job-item-header">
+                        <span data-icon="Box" data-icon-size="14"></span>
+                        <strong>${job.name}</strong>
+                        <span class="badge">${job.runner || 'unknown'}</span>
+                      </div>
+                      ${job.depends_on && job.depends_on.length > 0 ? `
+                        <div class="job-item-deps">
+                          Depends on: ${job.depends_on.join(', ')}
+                        </div>
+                      ` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${results.warnings && results.warnings.length > 0 ? `
+          <div class="dry-run-warnings">
+            <h4>
+              <span data-icon="AlertTriangle" data-icon-size="16"></span>
+              Warnings (${results.warnings.length})
+            </h4>
+            <ul>
+              ${results.warnings.map(w => `<li>${w.message || w}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+      <div class="dialog-footer">
+        <button class="btn-secondary" id="dry-run-cancel-btn">Cancel</button>
+        <button class="btn-primary" id="dry-run-execute-btn">
+          <span data-icon="Play" data-icon-size="16"></span>
+          Execute Pipeline
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dialog);
+  initializeIcons(dialog);
+
+  const closeDialog = () => {
+    dialog.classList.remove('active');
+    setTimeout(() => dialog.remove(), 300);
+  };
+
+  dialog.querySelector('#dry-run-close-btn').addEventListener('click', closeDialog);
+  dialog.querySelector('#dry-run-cancel-btn').addEventListener('click', closeDialog);
+  dialog.querySelector('#dry-run-execute-btn').addEventListener('click', async () => {
+    closeDialog();
+    await executePipeline(pipelinePath);
+  });
+
+  setTimeout(() => dialog.classList.add('active'), 10);
 }
 
 /**
@@ -294,6 +519,66 @@ async function executePipeline(path) {
       processId: result.processId,
       startTime: Date.now()
     });
+  }
+}
+
+/**
+ * Duplicate pipeline
+ */
+async function duplicatePipeline(path) {
+  const result = await withErrorHandling(
+    async () => await window.electronAPI.pipeline.read(path),
+    'Load Pipeline'
+  );
+
+  if (!result || !result.success) return;
+
+  const settings = await window.electronAPI.getSettings();
+  let directory = settings.pipelineConfigPath || settings.etlBackendPath;
+
+  if (!directory) {
+    showToast('Pipeline directory not configured. Please set it in Settings.', 'error');
+    return;
+  }
+
+  // If directory is the backend path, append 'schema' subdirectory
+  if (directory === settings.etlBackendPath) {
+    directory = `${directory}/schema`;
+  }
+
+  // Parse the YAML to update the name
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+  const originalName = path.split(/[/\\]/).pop().replace('.yaml', '');
+  const newPath = `${directory}/${originalName}_copy_${timestamp}.yaml`;
+
+  // Update pipeline name in content
+  let content = result.content;
+  try {
+    const yamlLines = content.split('\n');
+    const nameLineIndex = yamlLines.findIndex(line => line.trim().startsWith('name:'));
+    if (nameLineIndex !== -1) {
+      const nameMatch = yamlLines[nameLineIndex].match(/name:\s*["']?([^"'\n]+)["']?/);
+      if (nameMatch) {
+        const originalPipelineName = nameMatch[1];
+        yamlLines[nameLineIndex] = yamlLines[nameLineIndex].replace(
+          originalPipelineName,
+          `${originalPipelineName} (Copy)`
+        );
+        content = yamlLines.join('\n');
+      }
+    }
+  } catch (e) {
+    console.warn('Could not update pipeline name in duplicate:', e);
+  }
+
+  const writeResult = await withErrorHandling(
+    async () => await window.electronAPI.pipeline.write(newPath, content),
+    'Duplicate Pipeline'
+  );
+
+  if (writeResult && writeResult.success) {
+    showToast('Pipeline duplicated successfully', 'success');
+    await loadPipelines();
   }
 }
 
