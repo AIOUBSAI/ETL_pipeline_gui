@@ -4,6 +4,16 @@
  */
 
 /**
+ * Security Configuration
+ */
+export const SECURITY_CONFIG = {
+  MAX_LOGIN_ATTEMPTS: 5,
+  LOCKOUT_DURATION_MS: 5 * 60 * 1000, // 5 minutes
+  SESSION_TIMEOUT_MS: 30 * 60 * 1000, // 30 minutes
+  SESSION_WARNING_MS: 2 * 60 * 1000, // 2 minutes before timeout
+};
+
+/**
  * Views that require admin authentication
  * Add or remove views here to control access restrictions
  */

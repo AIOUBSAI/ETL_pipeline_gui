@@ -23,6 +23,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getSettings: () => ipcRenderer.invoke('get-settings'),
   saveSettings: (settings) => ipcRenderer.invoke('save-settings', settings),
 
+  // Authentication
+  verifyCredentials: (data) => ipcRenderer.invoke('verify-credentials', data),
+  getAuditLogs: (limit) => ipcRenderer.invoke('get-audit-logs', limit),
+
   // Theme plugins
   selectFile: (options) => ipcRenderer.invoke('select-file', options),
   importTheme: (filePath) => ipcRenderer.invoke('import-theme', filePath),

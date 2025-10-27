@@ -34,9 +34,9 @@ function initialize() {
 }
 
 // App lifecycle
-app.whenReady().then(() => {
-  // Load settings after app is ready
-  loadSettings();
+app.whenReady().then(async () => {
+  // Load settings after app is ready (async to support password migration)
+  await loadSettings();
 
   initialize();
 

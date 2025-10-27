@@ -4,37 +4,11 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { sendToRenderer } = require('../window');
 const { getSettings } = require('../utils/settings');
+const { ProcessOutputParser } = require('../utils/process-parser');
+const { assertFileExists, directoryExists } = require('../utils/validation');
 
 // Store running pipeline processes
 const runningPipelines = new Map();
-
-/**
- * Map Python logging levels to app log types
- * @param {string} pythonLevel - Python log level
- * @returns {string} App log type
- */
-function mapPythonLogLevel(pythonLevel) {
-  const level = pythonLevel.toUpperCase();
-
-  switch (level) {
-    case 'DEBUG':
-      return 'info';
-    case 'INFO':
-      return 'info';
-    case 'WARNING':
-    case 'WARN':
-      return 'warning';
-    case 'ERROR':
-      return 'error';
-    case 'CRITICAL':
-    case 'FATAL':
-      return 'error';
-    case 'SUCCESS':
-      return 'success';
-    default:
-      return 'info';
-  }
-}
 
 /**
  * Register pipeline management IPC handlers
@@ -98,9 +72,7 @@ function registerPipelineHandlers() {
   // Read pipeline YAML file content
   ipcMain.handle('pipeline:read', async (event, pipelinePath) => {
     try {
-      if (!fs.existsSync(pipelinePath)) {
-        throw new Error(`Pipeline file not found: ${pipelinePath}`);
-      }
+      assertFileExists(pipelinePath, 'Pipeline file');
 
       const content = await fs.readFile(pipelinePath, 'utf-8');
       return { success: true, content, path: pipelinePath };
@@ -140,9 +112,7 @@ function registerPipelineHandlers() {
         throw new Error('ETL Backend Path not configured in settings');
       }
 
-      if (!fs.existsSync(pipelinePath)) {
-        throw new Error(`Pipeline file not found: ${pipelinePath}`);
-      }
+      assertFileExists(pipelinePath, 'Pipeline file');
 
       // Run validation command
       const pythonPath = settings.pythonPath || 'python';
@@ -222,9 +192,7 @@ function registerPipelineHandlers() {
         throw new Error('ETL Backend Path not configured in settings');
       }
 
-      if (!fs.existsSync(pipelinePath)) {
-        throw new Error(`Pipeline file not found: ${pipelinePath}`);
-      }
+      assertFileExists(pipelinePath, 'Pipeline file');
 
       const pythonPath = settings.pythonPath || 'python';
       const args = [
@@ -253,56 +221,14 @@ function registerPipelineHandlers() {
 
       // Stream output to renderer
       pythonProcess.stdout.on('data', (data) => {
-        const message = data.toString();
-        const lines = message.split('\n').filter(line => line.trim());
-
-        lines.forEach(line => {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) return;
-
-          // Try to parse as JSON
-          let logEntry = null;
-          try {
-            const parsed = JSON.parse(trimmedLine);
-            if (parsed.level && parsed.message) {
-              logEntry = {
-                type: mapPythonLogLevel(parsed.level),
-                message: parsed.message,
-                timestamp: parsed.timestamp || new Date().toISOString(),
-                ...parsed // Include any additional fields (job_name, stage, etc.)
-              };
-            }
-          } catch (e) {
-            // Not JSON, treat as plain text
-            logEntry = {
-              type: 'info',
-              message: trimmedLine,
-              timestamp: new Date().toISOString()
-            };
-          }
-
-          if (logEntry) {
-            sendToRenderer('pipeline:output', { processId, log: logEntry });
-          }
+        ProcessOutputParser.parseStdout(data, (logEntry) => {
+          sendToRenderer('pipeline:output', { processId, log: logEntry });
         });
       });
 
       pythonProcess.stderr.on('data', (data) => {
-        const message = data.toString();
-        const lines = message.split('\n').filter(line => line.trim());
-
-        lines.forEach(line => {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) return;
-
-          sendToRenderer('pipeline:output', {
-            processId,
-            log: {
-              type: 'error',
-              message: trimmedLine,
-              timestamp: new Date().toISOString()
-            }
-          });
+        ProcessOutputParser.parseStderr(data, (logEntry) => {
+          sendToRenderer('pipeline:output', { processId, log: logEntry });
         });
       });
 

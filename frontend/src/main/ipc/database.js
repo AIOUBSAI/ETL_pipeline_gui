@@ -3,6 +3,7 @@ const { spawn } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
 const { getSettings } = require('../utils/settings');
+const { assertFileExists } = require('../utils/validation');
 
 /**
  * Execute a command and return output
@@ -106,9 +107,7 @@ function registerDatabaseHandlers() {
   // Get database schema information
   ipcMain.handle('database:get-schema', async (event, dbPath) => {
     try {
-      if (!fs.existsSync(dbPath)) {
-        throw new Error(`Database file not found: ${dbPath}`);
-      }
+      assertFileExists(dbPath, 'Database file');
 
       const ext = path.extname(dbPath).toLowerCase();
       const isDuckDB = ext === '.duckdb' || ext === '.db';
@@ -206,9 +205,7 @@ print(json.dumps(schemas))
   // Execute SQL query
   ipcMain.handle('database:query', async (event, dbPath, sql, options = {}) => {
     try {
-      if (!fs.existsSync(dbPath)) {
-        throw new Error(`Database file not found: ${dbPath}`);
-      }
+      assertFileExists(dbPath, 'Database file');
 
       const ext = path.extname(dbPath).toLowerCase();
       const isDuckDB = ext === '.duckdb' || ext === '.db';
@@ -314,9 +311,7 @@ except Exception as e:
   // Export table to CSV/JSON
   ipcMain.handle('database:export-table', async (event, dbPath, tableName, format = 'csv') => {
     try {
-      if (!fs.existsSync(dbPath)) {
-        throw new Error(`Database file not found: ${dbPath}`);
-      }
+      assertFileExists(dbPath, 'Database file');
 
       const settings = getSettings();
       const pythonPath = settings.pythonPath || 'python';
@@ -385,9 +380,7 @@ except Exception as e:
   // Get table column information
   ipcMain.handle('database:get-table-info', async (event, dbPath, tableName) => {
     try {
-      if (!fs.existsSync(dbPath)) {
-        throw new Error(`Database file not found: ${dbPath}`);
-      }
+      assertFileExists(dbPath, 'Database file');
 
       const settings = getSettings();
       const pythonPath = settings.pythonPath || 'python';

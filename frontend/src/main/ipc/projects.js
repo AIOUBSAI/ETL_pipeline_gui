@@ -5,40 +5,13 @@ const { spawn } = require('child_process');
 const { sendToRenderer } = require('../window');
 const { getSettings } = require('../utils/settings');
 const { sendNotification } = require('./notifications');
+const { ProcessOutputParser } = require('../utils/process-parser');
 
 // Store running processes
 const runningProcesses = new Map();
 
 // Store process start times
 const processStartTimes = new Map();
-
-/**
- * Map Python logging levels to app log types
- * @param {string} pythonLevel - Python log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
- * @returns {string} App log type
- */
-function mapPythonLogLevel(pythonLevel) {
-  const level = pythonLevel.toUpperCase();
-
-  switch (level) {
-    case 'DEBUG':
-      return 'info';
-    case 'INFO':
-      return 'info';
-    case 'WARNING':
-    case 'WARN':
-      return 'warning';
-    case 'ERROR':
-      return 'error';
-    case 'CRITICAL':
-    case 'FATAL':
-      return 'error';
-    case 'SUCCESS':
-      return 'success';
-    default:
-      return 'info';
-  }
-}
 
 /**
  * Register project management IPC handlers
@@ -88,37 +61,29 @@ function registerProjectHandlers() {
       // Validate ETL project path from settings
       if (!settings.etlProjectPath) {
         const errorMsg = 'ETL Project Path not configured in settings. Please set it in Settings > General';
-        sendToRenderer('log-message', {
-          type: 'error',
-          message: errorMsg,
-          timestamp: new Date().toISOString()
-        });
+        sendToRenderer('log-message',
+          ProcessOutputParser.createLogEntry(errorMsg, 'error')
+        );
         reject({ success: false, error: errorMsg });
         return;
       }
 
-      // Send log message
-      sendToRenderer('log-message', {
-        type: 'info',
-        message: `Starting pipeline for project: ${projectName}`,
-        timestamp: new Date().toISOString()
-      });
+      // Send log messages
+      sendToRenderer('log-message',
+        ProcessOutputParser.createLogEntry(`Starting pipeline for project: ${projectName}`, 'info')
+      );
 
       // Build command: cd to ETL project directory, activate venv, then run pipeline
       // The pipeline YAML is inside the ETL project at config/pipeline_duckdb.yaml
       const command = `cd /d "${settings.etlProjectPath}" && .venv\\Scripts\\activate && python -m pipeline.cli --pipeline config/pipeline_duckdb.yaml --dotenv .env --log-level user`;
 
-      sendToRenderer('log-message', {
-        type: 'info',
-        message: `Executing in ${settings.etlProjectPath}`,
-        timestamp: new Date().toISOString()
-      });
+      sendToRenderer('log-message',
+        ProcessOutputParser.createLogEntry(`Executing in ${settings.etlProjectPath}`, 'info')
+      );
 
-      sendToRenderer('log-message', {
-        type: 'info',
-        message: `Activating .venv and running pipeline...`,
-        timestamp: new Date().toISOString()
-      });
+      sendToRenderer('log-message',
+        ProcessOutputParser.createLogEntry('Activating .venv and running pipeline...', 'info')
+      );
 
       // Spawn with shell to support cd command
       const pythonProcess = spawn(command, [], {
@@ -134,78 +99,20 @@ function registerProjectHandlers() {
       let errorOutput = '';
 
       pythonProcess.stdout.on('data', (data) => {
-        const message = data.toString();
-        output += message;
+        output += data.toString();
 
-        // Parse each line separately (handle multiple lines in one data chunk)
-        const lines = message.split('\n').filter(line => line.trim());
-
-        lines.forEach(line => {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) return;
-
-          // Try to parse as JSON
-          let logEntry = null;
-          try {
-            const parsed = JSON.parse(trimmedLine);
-            // Validate it's a log object with required fields
-            if (parsed.level && parsed.message) {
-              logEntry = {
-                type: mapPythonLogLevel(parsed.level),
-                message: parsed.message,
-                timestamp: parsed.timestamp || new Date().toISOString()
-              };
-            }
-          } catch (e) {
-            // Not JSON, treat as plain text info log
-            logEntry = {
-              type: 'info',
-              message: trimmedLine,
-              timestamp: new Date().toISOString()
-            };
-          }
-
-          if (logEntry) {
-            sendToRenderer('log-message', logEntry);
-          }
+        // Parse and send to renderer
+        ProcessOutputParser.parseStdout(data, (logEntry) => {
+          sendToRenderer('log-message', logEntry);
         });
       });
 
       pythonProcess.stderr.on('data', (data) => {
-        const message = data.toString();
-        errorOutput += message;
+        errorOutput += data.toString();
 
-        // Parse each line separately (handle multiple lines in one data chunk)
-        const lines = message.split('\n').filter(line => line.trim());
-
-        lines.forEach(line => {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) return;
-
-          // Try to parse as JSON
-          let logEntry = null;
-          try {
-            const parsed = JSON.parse(trimmedLine);
-            // Validate it's a log object with required fields
-            if (parsed.level && parsed.message) {
-              logEntry = {
-                type: mapPythonLogLevel(parsed.level),
-                message: parsed.message,
-                timestamp: parsed.timestamp || new Date().toISOString()
-              };
-            }
-          } catch (e) {
-            // Not JSON, treat as plain text error log
-            logEntry = {
-              type: 'error',
-              message: trimmedLine,
-              timestamp: new Date().toISOString()
-            };
-          }
-
-          if (logEntry) {
-            sendToRenderer('log-message', logEntry);
-          }
+        // Parse and send to renderer
+        ProcessOutputParser.parseStderr(data, (logEntry) => {
+          sendToRenderer('log-message', logEntry);
         });
       });
 
@@ -218,11 +125,12 @@ function registerProjectHandlers() {
         runningProcesses.delete(projectName);
         processStartTimes.delete(projectName);
 
-        sendToRenderer('log-message', {
-          type: code === 0 ? 'success' : 'error',
-          message: `Process exited with code ${code}`,
-          timestamp: new Date().toISOString()
-        });
+        sendToRenderer('log-message',
+          ProcessOutputParser.createLogEntry(
+            `Process exited with code ${code}`,
+            code === 0 ? 'success' : 'error'
+          )
+        );
 
         // Send notification
         sendNotification({
@@ -247,11 +155,12 @@ function registerProjectHandlers() {
       pythonProcess.on('error', (error) => {
         runningProcesses.delete(projectName);
 
-        sendToRenderer('log-message', {
-          type: 'error',
-          message: `Failed to start Python process: ${error.message}`,
-          timestamp: new Date().toISOString()
-        });
+        sendToRenderer('log-message',
+          ProcessOutputParser.createLogEntry(
+            `Failed to start Python process: ${error.message}`,
+            'error'
+          )
+        );
         reject({ success: false, error: error.message });
       });
     });
@@ -270,11 +179,9 @@ function registerProjectHandlers() {
       runningProcesses.delete(projectName);
       processStartTimes.delete(projectName);
 
-      sendToRenderer('log-message', {
-        type: 'info',
-        message: `Stopped project: ${projectName}`,
-        timestamp: new Date().toISOString()
-      });
+      sendToRenderer('log-message',
+        ProcessOutputParser.createLogEntry(`Stopped project: ${projectName}`, 'info')
+      );
 
       // Send notification for manual stop
       sendNotification({
