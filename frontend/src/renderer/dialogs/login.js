@@ -2,6 +2,7 @@ import { getState, setState } from '../core/state.js';
 import { closeDialog } from '../components/dialog.js';
 import { showToast } from '../components/toast.js';
 import { loadDialog } from '../utils/templateLoader.js';
+import { PROTECTED_VIEWS, DEFAULT_CREDENTIALS, USER_ROLES } from '../core/auth-config.js';
 
 /**
  * Initialize the login dialog
@@ -58,18 +59,15 @@ export async function initializeLoginDialog() {
     try {
       // Get settings to check credentials
       const settings = await window.electronAPI.getSettings();
-      const credentials = settings.credentials || {
-        admin: { username: 'admin', password: 'admin' },
-        user: { username: 'user', password: 'user' }
-      };
+      const credentials = settings.credentials || DEFAULT_CREDENTIALS;
 
       // Check if admin credentials match
       if (username === credentials.admin.username && password === credentials.admin.password) {
         // Admin login successful
         setState('isAdminLoggedIn', true);
-        setState('currentUser', 'admin');
+        setState('currentUser', USER_ROLES.ADMIN);
         sessionStorage.setItem('isAdminLoggedIn', 'true');
-        sessionStorage.setItem('currentUser', 'admin');
+        sessionStorage.setItem('currentUser', USER_ROLES.ADMIN);
 
         showToast('Logged in as Admin', 'success');
         closeDialog('login');
@@ -85,9 +83,9 @@ export async function initializeLoginDialog() {
       else if (username === credentials.user.username && password === credentials.user.password) {
         // User login successful (limited access)
         setState('isAdminLoggedIn', false);
-        setState('currentUser', 'user');
+        setState('currentUser', USER_ROLES.USER);
         sessionStorage.setItem('isAdminLoggedIn', 'false');
-        sessionStorage.setItem('currentUser', 'user');
+        sessionStorage.setItem('currentUser', USER_ROLES.USER);
 
         showToast('Logged in as User (limited access)', 'info');
         closeDialog('login');
@@ -142,9 +140,8 @@ export function logoutAdmin() {
 
   // If on a protected route, navigate to dashboard
   const currentView = getState('currentView');
-  const protectedViews = ['editor', 'database', 'reports'];
 
-  if (protectedViews.includes(currentView)) {
+  if (PROTECTED_VIEWS.includes(currentView)) {
     document.dispatchEvent(new CustomEvent('navigationRequested', {
       detail: { view: 'dashboard' }
     }));

@@ -7,9 +7,7 @@ import { getById, get, getAll } from '../utils/dom.js';
 import { state, setState, getState } from '../core/state.js';
 import { openDialog } from './dialog.js';
 import { initializeIcons } from '../utils/icons.js';
-
-// Define which views require admin access
-const PROTECTED_VIEWS = ['pipeline', 'editor', 'database', 'reports'];
+import { PROTECTED_VIEWS, isProtectedView } from '../core/auth-config.js';
 
 /**
  * Initialize sidebar toggle
@@ -145,11 +143,5 @@ function updateProtectedViewsState() {
   });
 }
 
-/**
- * Check if a view is protected
- * @param {string} view - View name
- * @returns {boolean} True if view requires admin access
- */
-export function isProtectedView(view) {
-  return PROTECTED_VIEWS.includes(view);
-}
+// Re-export for backward compatibility
+export { isProtectedView };
