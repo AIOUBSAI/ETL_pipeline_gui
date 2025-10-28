@@ -1,6 +1,7 @@
 /**
  * Title Bar Component
- * Handles custom title bar controls and sidebar toggle
+ * Handles custom title bar controls (minimize, maximize, close)
+ * @module components/titlebar
  */
 
 import { getById } from '../utils/dom.js';
@@ -8,6 +9,8 @@ import { initializeIcons } from '../utils/icons.js';
 
 /**
  * Initialize title bar controls
+ * Sets up event listeners for window control buttons (minimize, maximize, close)
+ * @returns {void}
  */
 export function initializeTitleBar() {
   // Initialize icons in the title bar

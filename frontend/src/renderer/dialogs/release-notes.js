@@ -6,54 +6,28 @@
 import { getById } from '../utils/dom.js';
 import { loadDialog } from '../utils/templateLoader.js';
 import { extractData } from '../utils/ipc-handler.js';
-
-// Load marked and mermaid from CDN
-let marked = null;
-let mermaid = null;
+import { marked } from '../../node_modules/marked/lib/marked.esm.js';
+import mermaid from '../../node_modules/mermaid/dist/mermaid.esm.min.mjs';
 
 /**
- * Load external libraries
+ * Initialize libraries
  */
-async function loadLibraries() {
-  if (marked && mermaid) return;
+function initializeLibraries() {
+  // Configure marked options
+  marked.setOptions({
+    breaks: true,
+    gfm: true,
+    headerIds: true,
+    mangle: false,
+  });
 
-  // Load marked
-  if (!marked) {
-    const markedScript = document.createElement('script');
-    markedScript.src = 'https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js';
-    await new Promise((resolve, reject) => {
-      markedScript.onload = () => {
-        marked = window.marked;
-        resolve();
-      };
-      markedScript.onerror = reject;
-      document.head.appendChild(markedScript);
-    });
-  }
-
-  // Load mermaid
-  if (!mermaid) {
-    const mermaidScript = document.createElement('script');
-    mermaidScript.type = 'module';
-    mermaidScript.textContent = `
-      import m from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      window.mermaid = m;
-      window.mermaid.initialize({
-        startOnLoad: false,
-        theme: 'dark',
-        securityLevel: 'loose',
-        fontFamily: 'var(--font-mono, monospace)',
-      });
-      window.dispatchEvent(new Event('mermaidReady'));
-    `;
-    await new Promise((resolve) => {
-      window.addEventListener('mermaidReady', () => {
-        mermaid = window.mermaid;
-        resolve();
-      }, { once: true });
-      document.head.appendChild(mermaidScript);
-    });
-  }
+  // Initialize mermaid
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    fontFamily: 'var(--font-mono, monospace)',
+  });
 }
 
 /**
@@ -87,20 +61,12 @@ async function loadReleaseNotes() {
       </div>
     `;
 
-    // Load libraries first
-    await loadLibraries();
+    // Initialize libraries
+    initializeLibraries();
 
     // Fetch markdown content from main process
     const response = await window.electronAPI.readReleaseNotes();
     const markdownContent = extractData(response, 'content');
-
-    // Configure marked options
-    marked.setOptions({
-      breaks: true,
-      gfm: true,
-      headerIds: true,
-      mangle: false,
-    });
 
     // Convert markdown to HTML
     let htmlContent = marked.parse(markdownContent);
@@ -141,11 +107,12 @@ async function loadReleaseNotes() {
 
   } catch (error) {
     console.error('Failed to load release notes:', error);
+    const errorMessage = error?.message || error || 'Unknown error occurred';
     contentContainer.innerHTML = `
       <div class="release-notes-error">
         <span data-icon="AlertTriangle" data-icon-size="48"></span>
         <h3>Failed to Load Release Notes</h3>
-        <p>${error.message}</p>
+        <p>${errorMessage}</p>
       </div>
     `;
   }

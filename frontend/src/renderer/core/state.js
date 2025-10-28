@@ -1,8 +1,53 @@
 /**
  * Application State Management
  * Central store for application state
+ * @module core/state
  */
 
+/**
+ * @typedef {import('../types.js').ViewName} ViewName
+ * @typedef {import('../types.js').Project} Project
+ * @typedef {import('../types.js').LogEntry} LogEntry
+ * @typedef {import('../types.js').LogFilter} LogFilter
+ * @typedef {import('../types.js').UserRole} UserRole
+ * @typedef {import('../types.js').Settings} Settings
+ * @typedef {import('../types.js').Pipeline} Pipeline
+ * @typedef {import('../types.js').QueryResult} QueryResult
+ */
+
+/**
+ * Application state shape
+ * @typedef {Object} AppState
+ * @property {ViewName} currentView - Current active view
+ * @property {Array<Project>} projects - List of available projects
+ * @property {string|null} selectedProjectPath - Currently selected project path
+ * @property {Array<LogEntry>} logs - Application log entries
+ * @property {LogFilter} currentLogFilter - Active log filter
+ * @property {boolean} isRunning - Whether pipeline is currently running
+ * @property {boolean} sidebarVisible - Sidebar visibility state
+ * @property {boolean} isAdminLoggedIn - Admin authentication status
+ * @property {UserRole|null} currentUser - Current user role
+ * @property {Settings} settings - Application settings
+ * @property {Array<Pipeline>} pipelines - Available pipelines
+ * @property {Pipeline|null} currentPipeline - Currently selected pipeline
+ * @property {Object|null} pipelineValidation - Pipeline validation results
+ * @property {Object|null} pipelineExecutionStatus - Pipeline execution status
+ * @property {Array<Object>} transformFiles - Transform files in editor
+ * @property {Object|null} currentFile - Currently open file in editor
+ * @property {boolean} unsavedChanges - Whether editor has unsaved changes
+ * @property {Array<Object>} databases - Available databases
+ * @property {Object|null} currentDatabase - Currently selected database
+ * @property {Array<string>} schemas - Database schemas
+ * @property {Array<string>} tables - Database tables
+ * @property {QueryResult|null} queryResults - Last query results
+ * @property {Array<Object>} reports - Available reports
+ * @property {Object|null} currentReport - Currently selected report
+ */
+
+/**
+ * Application state
+ * @type {AppState}
+ */
 export const state = {
   currentView: 'dashboard',
   projects: [],
@@ -64,9 +109,10 @@ const listeners = new Map();
 
 /**
  * Subscribe to state changes
- * @param {string} key - State key to watch
- * @param {Function} callback - Callback function
- * @returns {Function} Unsubscribe function
+ * @template {keyof AppState} K
+ * @param {K} key - State key to watch
+ * @param {(newValue: AppState[K], oldValue: AppState[K]) => void} callback - Callback function receiving new and old values
+ * @returns {() => void} Unsubscribe function
  */
 export function subscribe(key, callback) {
   if (!listeners.has(key)) {
@@ -85,8 +131,9 @@ export function subscribe(key, callback) {
 
 /**
  * Update state and notify listeners
- * @param {string} key - State key
- * @param {any} value - New value
+ * @template {keyof AppState} K
+ * @param {K} key - State key
+ * @param {AppState[K]} value - New value
  */
 export function setState(key, value) {
   const oldValue = state[key];
@@ -101,8 +148,9 @@ export function setState(key, value) {
 
 /**
  * Get state value
- * @param {string} key - State key
- * @returns {any} State value
+ * @template {keyof AppState} K
+ * @param {K} key - State key
+ * @returns {AppState[K]} State value
  */
 export function getState(key) {
   return state[key];
@@ -110,8 +158,9 @@ export function getState(key) {
 
 /**
  * Update nested state (e.g., settings.theme)
- * @param {string} parentKey - Parent key
- * @param {string} childKey - Child key
+ * @template {keyof AppState} P
+ * @param {P} parentKey - Parent state key
+ * @param {string} childKey - Child property key
  * @param {any} value - New value
  */
 export function setNestedState(parentKey, childKey, value) {

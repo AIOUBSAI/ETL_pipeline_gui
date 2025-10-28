@@ -12,7 +12,7 @@
  * return successResponse({ content: 'file content', path: '/path/to/file' });
  * // Returns: { success: true, content: 'file content', path: '/path/to/file' }
  */
-export function successResponse(data = {}) {
+function successResponse(data = {}) {
   return {
     success: true,
     ...data
@@ -29,7 +29,7 @@ export function successResponse(data = {}) {
  * return errorResponse(error, { content: '', path: null });
  * // Returns: { success: false, error: 'File not found', content: '', path: null }
  */
-export function errorResponse(error, defaults = {}) {
+function errorResponse(error, defaults = {}) {
   const errorMessage = error instanceof Error ? error.message : String(error);
 
   return {
@@ -54,7 +54,7 @@ export function errorResponse(error, defaults = {}) {
  *   { content: '', path: null }
  * ));
  */
-export function withErrorHandling(handler, errorDefaults = {}) {
+function withErrorHandling(handler, errorDefaults = {}) {
   return async (...args) => {
     try {
       return await handler(...args);
@@ -64,3 +64,9 @@ export function withErrorHandling(handler, errorDefaults = {}) {
     }
   };
 }
+
+module.exports = {
+  successResponse,
+  errorResponse,
+  withErrorHandling
+};

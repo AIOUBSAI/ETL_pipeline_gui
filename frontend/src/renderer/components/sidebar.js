@@ -1,6 +1,11 @@
 /**
  * Sidebar Component
- * Handles sidebar navigation and toggle
+ * Handles sidebar navigation, view switching, and protected view access control
+ * @module components/sidebar
+ */
+
+/**
+ * @typedef {import('../types.js').ViewName} ViewName
  */
 
 import { getById, get, getAll } from '../utils/dom.js';
@@ -10,7 +15,9 @@ import { initializeIcons } from '../utils/icons.js';
 import { PROTECTED_VIEWS, isProtectedView } from '../core/auth-config.js';
 
 /**
- * Initialize sidebar toggle
+ * Initialize sidebar toggle functionality
+ * Sets up the sidebar collapse/expand button
+ * @returns {void}
  */
 export function initializeSidebarToggle() {
   const toggleBtn = getById('sidebar-toggle');
@@ -44,7 +51,9 @@ export function initializeSidebarToggle() {
 
 /**
  * Initialize sidebar navigation
- * @param {Function} onViewChange - Callback when view changes
+ * Sets up click handlers for navigation items with authentication checks
+ * @param {(view: ViewName) => void} onViewChange - Callback function invoked when view changes
+ * @returns {void}
  */
 export function initializeNavigation(onViewChange) {
   // Initialize icons in sidebar

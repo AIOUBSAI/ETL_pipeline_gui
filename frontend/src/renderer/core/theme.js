@@ -1,11 +1,32 @@
 /**
  * Theme Loader Module
  * Manages dynamic theme loading and switching
+ * @module core/theme
  */
 
 import { extractData } from '../utils/ipc-handler.js';
 
+/**
+ * Theme definition structure
+ * @typedef {Object} Theme
+ * @property {string} id - Unique theme identifier
+ * @property {string} name - Display name
+ * @property {string} file - Path to CSS file (relative for built-in, absolute for custom)
+ * @property {'light'|'dark'} category - Theme category
+ * @property {string} family - Theme family (catppuccin, gruvbox, etc.)
+ * @property {string} [author] - Theme author (custom themes)
+ * @property {string} [description] - Theme description (custom themes)
+ * @property {boolean} [isCustom] - Whether this is a custom theme
+ */
+
+/**
+ * Theme loader and manager class
+ * Handles theme switching, custom themes, and persistence
+ */
 export class ThemeLoader {
+  /**
+   * Initialize theme loader
+   */
   constructor() {
     this.currentTheme = null;
     this.themeLink = null;
@@ -34,6 +55,11 @@ export class ThemeLoader {
     this.defaultTheme = 'catppuccin-frappe';
   }
 
+  /**
+   * Initialize the theme system
+   * Loads available themes and applies saved/default theme
+   * @returns {Promise<void>}
+   */
   async init() {
     // Load all themes (built-in + custom)
     await this.loadAllThemes();
@@ -60,6 +86,11 @@ export class ThemeLoader {
     this.loadTheme(savedTheme || this.defaultTheme);
   }
 
+  /**
+   * Load all available themes (built-in and custom)
+   * Fetches custom themes from backend and merges with built-in themes
+   * @returns {Promise<void>}
+   */
   async loadAllThemes() {
     // Start with built-in themes
     this.availableThemes = [...this.builtInThemes];
@@ -88,12 +119,23 @@ export class ThemeLoader {
     }
   }
 
+  /**
+   * Refresh themes list from backend
+   * Reloads custom themes and dispatches update event
+   * @returns {Promise<void>}
+   */
   async refreshThemes() {
     await this.loadAllThemes();
     // Dispatch event so dialogs can update
     window.dispatchEvent(new CustomEvent('themesRefreshed'));
   }
 
+  /**
+   * Load and apply a theme by ID
+   * Handles both built-in and custom themes
+   * @param {string} themeId - Theme identifier to load
+   * @returns {Promise<void>}
+   */
   async loadTheme(themeId) {
     let theme = this.availableThemes.find(t => t.id === themeId);
 
@@ -149,26 +191,51 @@ export class ThemeLoader {
 
   }
 
+  /**
+   * Get currently active theme ID
+   * @returns {string|null} Current theme ID
+   */
   getCurrentTheme() {
     return this.currentTheme;
   }
 
+  /**
+   * Get all available themes (built-in and custom)
+   * @returns {Array<Theme>} Array of theme definitions
+   */
   getAvailableThemes() {
     return this.availableThemes;
   }
 
+  /**
+   * Get themes by category
+   * @param {'light'|'dark'} category - Theme category to filter
+   * @returns {Array<Theme>} Filtered array of themes
+   */
   getThemesByCategory(category) {
     return this.availableThemes.filter(t => t.category === category);
   }
 
+  /**
+   * Get all light themes
+   * @returns {Array<Theme>} Array of light themes
+   */
   getLightThemes() {
     return this.getThemesByCategory('light');
   }
 
+  /**
+   * Get all dark themes
+   * @returns {Array<Theme>} Array of dark themes
+   */
   getDarkThemes() {
     return this.getThemesByCategory('dark');
   }
 
+  /**
+   * Save theme preference to localStorage
+   * @param {string} themeId - Theme ID to save
+   */
   saveTheme(themeId) {
     try {
       localStorage.setItem('selectedTheme', themeId);
@@ -176,6 +243,10 @@ export class ThemeLoader {
     }
   }
 
+  /**
+   * Get saved theme preference from localStorage
+   * @returns {string|null} Saved theme ID or null
+   */
   getSavedTheme() {
     try {
       return localStorage.getItem('selectedTheme');
@@ -184,6 +255,11 @@ export class ThemeLoader {
     }
   }
 
+  /**
+   * Add or update a custom theme
+   * @param {Theme} theme - Theme definition to add
+   * @returns {boolean} Success status
+   */
   addCustomTheme(theme) {
     if (!theme.id || !theme.name || !theme.file) {
       return false;
@@ -200,6 +276,12 @@ export class ThemeLoader {
     return true;
   }
 
+  /**
+   * Remove a custom theme
+   * Cannot remove default theme or built-in themes
+   * @param {string} themeId - Theme ID to remove
+   * @returns {boolean} Success status
+   */
   removeCustomTheme(themeId) {
     if (themeId === this.defaultTheme) {
       return false;
