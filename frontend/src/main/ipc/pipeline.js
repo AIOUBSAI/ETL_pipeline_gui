@@ -6,6 +6,7 @@ const { sendToRenderer } = require('../window');
 const { getSettings } = require('../utils/settings');
 const { ProcessOutputParser } = require('../utils/process-parser');
 const { assertFileExists, directoryExists } = require('../utils/validation');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 // Store running pipeline processes
 const runningPipelines = new Map();
@@ -21,7 +22,7 @@ function registerPipelineHandlers() {
       const baseDir = directory || settings.pipelineConfigPath || settings.etlBackendPath;
 
       if (!baseDir) {
-        return { success: false, error: 'Pipeline directory not configured in settings', pipelines: [] };
+        throw new Error('Pipeline directory not configured in settings');
       }
 
       // Look for pipeline.yaml files in the directory and subdirectories
@@ -63,9 +64,9 @@ function registerPipelineHandlers() {
       // Sort by last modified (newest first)
       pipelines.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
 
-      return { success: true, pipelines };
+      return successResponse({ pipelines });
     } catch (error) {
-      return { success: false, error: error.message, pipelines: [] };
+      return errorResponse(error, { pipelines: [] });
     }
   });
 
@@ -75,9 +76,9 @@ function registerPipelineHandlers() {
       assertFileExists(pipelinePath, 'Pipeline file');
 
       const content = await fs.readFile(pipelinePath, 'utf-8');
-      return { success: true, content, path: pipelinePath };
+      return successResponse({ content, path: pipelinePath });
     } catch (error) {
-      return { success: false, error: error.message, content: '' };
+      return errorResponse(error, { content: '', path: null });
     }
   });
 
@@ -96,9 +97,9 @@ function registerPipelineHandlers() {
       // Write the file
       await fs.writeFile(pipelinePath, content, 'utf-8');
 
-      return { success: true, path: pipelinePath };
+      return successResponse({ path: pipelinePath });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -141,13 +142,12 @@ function registerPipelineHandlers() {
 
         pythonProcess.on('close', (code) => {
           if (code === 0) {
-            resolve({
-              success: true,
+            resolve(successResponse({
               valid: true,
               output,
               errors: [],
               warnings: []
-            });
+            }));
           } else {
             // Parse validation errors from output
             const errors = [];
@@ -163,22 +163,21 @@ function registerPipelineHandlers() {
               }
             });
 
-            resolve({
-              success: true,
+            resolve(successResponse({
               valid: false,
               output: output + errorOutput,
               errors,
               warnings
-            });
+            }));
           }
         });
 
         pythonProcess.on('error', (error) => {
-          reject({ success: false, error: error.message });
+          reject(errorResponse(error, { valid: false, output: '', errors: [], warnings: [] }));
         });
       });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { valid: false, output: '', errors: [], warnings: [] });
     }
   });
 
@@ -255,9 +254,9 @@ function registerPipelineHandlers() {
         });
       });
 
-      return { success: true, processId };
+      return successResponse({ processId });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { processId: null });
     }
   });
 
@@ -267,15 +266,15 @@ function registerPipelineHandlers() {
       const pipelineData = runningPipelines.get(processId);
 
       if (!pipelineData) {
-        return { success: false, error: 'Pipeline process not found' };
+        throw new Error('Pipeline process not found');
       }
 
       pipelineData.process.kill('SIGTERM');
       runningPipelines.delete(processId);
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -286,7 +285,7 @@ function registerPipelineHandlers() {
       const baseDir = reportsDir || settings.reportsPath || path.join(settings.etlBackendPath || '', 'reports');
 
       if (!fs.existsSync(baseDir)) {
-        return { success: true, reports: [] };
+        return successResponse({ reports: [] });
       }
 
       const reports = [];
@@ -309,9 +308,9 @@ function registerPipelineHandlers() {
       // Sort by date (newest first)
       reports.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-      return { success: true, reports };
+      return successResponse({ reports });
     } catch (error) {
-      return { success: false, error: error.message, reports: [] };
+      return errorResponse(error, { reports: [] });
     }
   });
 
@@ -323,9 +322,9 @@ function registerPipelineHandlers() {
       }
 
       const content = await fs.readFile(reportPath, 'utf-8');
-      return { success: true, content, path: reportPath };
+      return successResponse({ content, path: reportPath });
     } catch (error) {
-      return { success: false, error: error.message, content: '' };
+      return errorResponse(error, { content: '', path: null });
     }
   });
 }

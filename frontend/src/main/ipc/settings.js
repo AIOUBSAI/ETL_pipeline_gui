@@ -2,6 +2,7 @@ const { ipcMain } = require('electron');
 const { getSettings, updateSettings } = require('../utils/settings');
 const { verifyPassword } = require('../utils/crypto');
 const { logAuthEvent, AuditEvents, getRecentAuditLogs } = require('../utils/audit-logger');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Register settings IPC handlers
@@ -9,25 +10,34 @@ const { logAuthEvent, AuditEvents, getRecentAuditLogs } = require('../utils/audi
 function registerSettingsHandlers() {
   // Get settings
   ipcMain.handle('get-settings', () => {
-    return getSettings();
+    try {
+      const settings = getSettings();
+      return successResponse({ settings });
+    } catch (error) {
+      return errorResponse(error, { settings: {} });
+    }
   });
 
   // Save settings
   ipcMain.handle('save-settings', async (event, newSettings) => {
-    // Log if credentials were changed
-    const oldSettings = getSettings();
-    const credentialsChanged = newSettings.credentials &&
-      JSON.stringify(oldSettings.credentials) !== JSON.stringify(newSettings.credentials);
+    try {
+      // Log if credentials were changed
+      const oldSettings = getSettings();
+      const credentialsChanged = newSettings.credentials &&
+        JSON.stringify(oldSettings.credentials) !== JSON.stringify(newSettings.credentials);
 
-    const result = await updateSettings(newSettings);
+      const result = await updateSettings(newSettings);
 
-    if (credentialsChanged) {
-      logAuthEvent(AuditEvents.PASSWORD_CHANGED, 'admin', {
-        changedBy: 'settings-dialog'
-      });
+      if (credentialsChanged) {
+        logAuthEvent(AuditEvents.PASSWORD_CHANGED, 'admin', {
+          changedBy: 'settings-dialog'
+        });
+      }
+
+      return result; // updateSettings already returns standardized format
+    } catch (error) {
+      return errorResponse(error);
     }
-
-    return result;
   });
 
   // Verify credentials (secure backend validation)
@@ -37,7 +47,7 @@ function registerSettingsHandlers() {
       const credentials = settings.credentials?.[role];
 
       if (!credentials) {
-        return { valid: false, error: 'Invalid role' };
+        throw new Error('Invalid role');
       }
 
       // Check username
@@ -46,7 +56,7 @@ function registerSettingsHandlers() {
           role,
           reason: 'invalid-username'
         });
-        return { valid: false, error: 'Invalid credentials' };
+        return successResponse({ valid: false });
       }
 
       // Verify password hash
@@ -61,20 +71,21 @@ function registerSettingsHandlers() {
         });
       }
 
-      return { valid: isValid };
+      return successResponse({ valid: isValid });
     } catch (error) {
       console.error('Error verifying credentials:', error);
-      return { valid: false, error: 'Verification failed' };
+      return errorResponse(error, { valid: false });
     }
   });
 
   // Get audit logs (admin only)
   ipcMain.handle('get-audit-logs', async (event, limit = 100) => {
     try {
-      return getRecentAuditLogs(limit);
+      const logs = getRecentAuditLogs(limit);
+      return successResponse({ logs });
     } catch (error) {
       console.error('Error getting audit logs:', error);
-      return [];
+      return errorResponse(error, { logs: [] });
     }
   });
 

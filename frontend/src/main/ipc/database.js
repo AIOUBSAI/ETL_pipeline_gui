@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { getSettings } = require('../utils/settings');
 const { assertFileExists } = require('../utils/validation');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Execute a command and return output
@@ -191,14 +192,13 @@ print(json.dumps(schemas))
         tables.push(...schemaTables);
       });
 
-      return {
-        success: true,
+      return successResponse({
         type: isDuckDB ? 'duckdb' : 'sqlite',
         schemas,
         tables
-      };
+      });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { type: null, schemas: {}, tables: [] });
     }
   });
 
@@ -289,13 +289,12 @@ except Exception as e:
         await fs.remove(tempScript);
 
         if (result.success) {
-          return {
-            success: true,
+          return successResponse({
             columns: result.columns,
             rows: result.rows,
             rowCount: result.rowCount,
             duration: result.duration
-          };
+          });
         } else {
           throw new Error(result.error);
         }
@@ -304,7 +303,7 @@ except Exception as e:
         throw error;
       }
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { columns: [], rows: [], rowCount: 0, duration: 0 });
     }
   });
 
@@ -363,17 +362,16 @@ except Exception as e:
         await executeCommand(pythonPath, [tempScript], path.dirname(dbPath));
         await fs.remove(tempScript);
 
-        return {
-          success: true,
+        return successResponse({
           outputPath,
           filename: outputFilename
-        };
+        });
       } catch (error) {
         await fs.remove(tempScript);
         throw error;
       }
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { outputPath: null, filename: null });
     }
   });
 
@@ -430,13 +428,20 @@ except Exception as e:
 
         await fs.remove(tempScript);
 
-        return result;
+        if (result.success) {
+          return successResponse({
+            columns: result.columns,
+            rowCount: result.rowCount
+          });
+        } else {
+          throw new Error(result.error);
+        }
       } catch (error) {
         await fs.remove(tempScript);
         throw error;
       }
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { columns: [], rowCount: 0 });
     }
   });
 }

@@ -3,6 +3,7 @@ import { closeDialog } from '../components/dialog.js';
 import { showToast } from '../components/toast.js';
 import { loadDialog } from '../utils/templateLoader.js';
 import { PROTECTED_VIEWS, USER_ROLES, SECURITY_CONFIG } from '../core/auth-config.js';
+import { extractData } from '../utils/ipc-handler.js';
 
 // Login attempt tracking
 const loginAttempts = new Map();  // username -> { count, lockedUntil }
@@ -101,11 +102,12 @@ export async function initializeLoginDialog() {
 
     try {
       // Verify credentials with backend (secure)
-      const result = await window.electronAPI.verifyCredentials({
+      const response = await window.electronAPI.verifyCredentials({
         username,
         password,
         role
       });
+      const result = extractData(response);
 
       if (result.valid) {
         // Clear failed attempts

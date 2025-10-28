@@ -6,6 +6,7 @@
 import { getById } from '../../utils/dom.js';
 import { state, setState } from '../../core/state.js';
 import { showToast } from '../../components/toast.js';
+import { extractData } from '../../utils/ipc-handler.js';
 
 /**
  * Initialize dashboard controls
@@ -21,11 +22,13 @@ export function initializeControls(callbacks) {
   if (selectFolderBtn) {
     selectFolderBtn.addEventListener('click', async () => {
       try {
-        const folderPath = await window.electronAPI.selectRootFolder();
+        const folderResponse = await window.electronAPI.selectRootFolder();
+        const folderPath = extractData(folderResponse, 'path');
 
         if (folderPath) {
           // Update settings with new root folder
-          const settings = await window.electronAPI.getSettings();
+          const settingsResponse = await window.electronAPI.getSettings();
+          const settings = extractData(settingsResponse, 'settings');
           settings.rootFolder = folderPath;
           await window.electronAPI.saveSettings(settings);
 
@@ -117,7 +120,8 @@ export async function loadProjects() {
       return;
     }
 
-    const folders = await window.electronAPI.scanProjects(state.settings.rootFolder);
+    const response = await window.electronAPI.scanProjects(state.settings.rootFolder);
+    const folders = extractData(response, 'projects');
     setState('projects', folders);
     renderProjectSelect();
   } catch (error) {

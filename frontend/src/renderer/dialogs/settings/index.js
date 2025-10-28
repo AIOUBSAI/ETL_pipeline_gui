@@ -11,6 +11,7 @@ import { loadProjects } from '../../views/dashboard/controls.js';
 import { loadDialog } from '../../utils/templateLoader.js';
 import { notificationManager } from '../../utils/notifications.js';
 import { soundManager } from '../../utils/sound-manager.js';
+import { extractData } from '../../utils/ipc-handler.js';
 
 let themeLoader = null;
 
@@ -64,26 +65,36 @@ export async function initializeSettingsDialog(themeLoaderInstance) {
 
   if (selectFolderBtn) {
     selectFolderBtn.addEventListener('click', async () => {
-      const folder = await window.electronAPI.selectRootFolder();
-      if (folder) {
-        const dialogInput = getById('dialog-root-folder-input');
-        if (dialogInput) {
-          dialogInput.value = folder;
+      try {
+        const response = await window.electronAPI.selectRootFolder();
+        const folder = extractData(response, 'path');
+        if (folder) {
+          const dialogInput = getById('dialog-root-folder-input');
+          if (dialogInput) {
+            dialogInput.value = folder;
+          }
+          setNestedState('settings', 'rootFolder', folder);
         }
-        setNestedState('settings', 'rootFolder', folder);
+      } catch (error) {
+        console.error('Error selecting folder:', error);
       }
     });
   }
 
   if (selectEtlProjectBtn) {
     selectEtlProjectBtn.addEventListener('click', async () => {
-      const folder = await window.electronAPI.selectRootFolder();
-      if (folder) {
-        const dialogInput = getById('dialog-etl-project-input');
-        if (dialogInput) {
-          dialogInput.value = folder;
+      try {
+        const response = await window.electronAPI.selectRootFolder();
+        const folder = extractData(response, 'path');
+        if (folder) {
+          const dialogInput = getById('dialog-etl-project-input');
+          if (dialogInput) {
+            dialogInput.value = folder;
+          }
+          setNestedState('settings', 'etlProjectPath', folder);
         }
-        setNestedState('settings', 'etlProjectPath', folder);
+      } catch (error) {
+        console.error('Error selecting folder:', error);
       }
     });
   }
@@ -92,13 +103,18 @@ export async function initializeSettingsDialog(themeLoaderInstance) {
   const selectBackendBtn = getById('dialog-select-backend-btn');
   if (selectBackendBtn) {
     selectBackendBtn.addEventListener('click', async () => {
-      const folder = await window.electronAPI.selectRootFolder();
-      if (folder) {
-        const dialogInput = getById('dialog-backend-path-input');
-        if (dialogInput) {
-          dialogInput.value = folder;
+      try {
+        const response = await window.electronAPI.selectRootFolder();
+        const folder = extractData(response, 'path');
+        if (folder) {
+          const dialogInput = getById('dialog-backend-path-input');
+          if (dialogInput) {
+            dialogInput.value = folder;
+          }
+          setNestedState('settings', 'etlBackendPath', folder);
         }
-        setNestedState('settings', 'etlBackendPath', folder);
+      } catch (error) {
+        console.error('Error selecting folder:', error);
       }
     });
   }
@@ -178,7 +194,8 @@ export async function initializeSettingsDialog(themeLoaderInstance) {
  */
 export async function loadSettings() {
   try {
-    const loadedSettings = await window.electronAPI.getSettings();
+    const response = await window.electronAPI.getSettings();
+    const loadedSettings = extractData(response, 'settings');
     setState('settings', { ...state.settings, ...loadedSettings });
 
     const dialogRootInput = getById('dialog-root-folder-input');

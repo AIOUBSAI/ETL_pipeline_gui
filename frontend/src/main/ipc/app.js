@@ -5,6 +5,7 @@
 
 const { ipcMain } = require('electron');
 const { version } = require('../../../package.json');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Register app-related IPC handlers
@@ -14,7 +15,11 @@ function registerAppHandlers() {
    * Get app version
    */
   ipcMain.handle('get-app-version', async () => {
-    return version;
+    try {
+      return successResponse({ version });
+    } catch (error) {
+      return errorResponse(error, { version: 'unknown' });
+    }
   });
 }
 

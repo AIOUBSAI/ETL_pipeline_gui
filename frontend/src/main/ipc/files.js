@@ -2,6 +2,7 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs-extra');
 const path = require('path');
 const { getSettings } = require('../utils/settings');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Register file operation IPC handlers
@@ -17,15 +18,14 @@ function registerFileHandlers() {
       const content = await fs.readFile(filePath, 'utf-8');
       const stats = await fs.stat(filePath);
 
-      return {
-        success: true,
+      return successResponse({
         content,
         path: filePath,
         size: stats.size,
         lastModified: stats.mtime
-      };
+      });
     } catch (error) {
-      return { success: false, error: error.message, content: '' };
+      return errorResponse(error, { content: '', path: null, size: 0, lastModified: null });
     }
   });
 
@@ -38,9 +38,9 @@ function registerFileHandlers() {
       // Write the file
       await fs.writeFile(filePath, content, 'utf-8');
 
-      return { success: true, path: filePath };
+      return successResponse({ path: filePath });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -48,7 +48,7 @@ function registerFileHandlers() {
   ipcMain.handle('file:list', async (event, directory, options = {}) => {
     try {
       if (!fs.existsSync(directory)) {
-        return { success: true, files: [] };
+        return successResponse({ files: [] });
       }
 
       const pattern = options.pattern || '*';
@@ -87,9 +87,9 @@ function registerFileHandlers() {
       // Sort by last modified (newest first)
       files.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
 
-      return { success: true, files };
+      return successResponse({ files });
     } catch (error) {
-      return { success: false, error: error.message, files: [] };
+      return errorResponse(error, { files: [] });
     }
   });
 
@@ -102,9 +102,9 @@ function registerFileHandlers() {
 
       await fs.remove(filePath);
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -122,9 +122,9 @@ function registerFileHandlers() {
       // Create the file
       await fs.writeFile(filePath, content, 'utf-8');
 
-      return { success: true, path: filePath };
+      return successResponse({ path: filePath });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -145,9 +145,9 @@ function registerFileHandlers() {
       // Move/rename the file
       await fs.move(oldPath, newPath);
 
-      return { success: true, path: newPath };
+      return successResponse({ path: newPath });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -164,9 +164,9 @@ function registerFileHandlers() {
       // Copy the file
       await fs.copyFile(sourcePath, destPath);
 
-      return { success: true, path: destPath };
+      return successResponse({ path: destPath });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -181,9 +181,9 @@ function registerFileHandlers() {
         type = stats.isDirectory() ? 'directory' : 'file';
       }
 
-      return { success: true, exists, type };
+      return successResponse({ exists, type });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { exists: false, type: null });
     }
   });
 
@@ -196,17 +196,16 @@ function registerFileHandlers() {
 
       const stats = await fs.stat(filePath);
 
-      return {
-        success: true,
+      return successResponse({
         size: stats.size,
         isDirectory: stats.isDirectory(),
         isFile: stats.isFile(),
         created: stats.birthtime,
         modified: stats.mtime,
         accessed: stats.atime
-      };
+      });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { size: 0, isDirectory: false, isFile: false, created: null, modified: null, accessed: null });
     }
   });
 
@@ -221,12 +220,12 @@ function registerFileHandlers() {
       });
 
       if (!result.canceled && result.filePaths.length > 0) {
-        return { success: true, filePaths: result.filePaths };
+        return successResponse({ filePaths: result.filePaths, canceled: false });
       }
 
-      return { success: false, canceled: true, filePaths: [] };
+      return successResponse({ filePaths: [], canceled: true });
     } catch (error) {
-      return { success: false, error: error.message, filePaths: [] };
+      return errorResponse(error, { filePaths: [], canceled: true });
     }
   });
 
@@ -240,12 +239,12 @@ function registerFileHandlers() {
       });
 
       if (!result.canceled && result.filePaths.length > 0) {
-        return { success: true, path: result.filePaths[0] };
+        return successResponse({ path: result.filePaths[0], canceled: false });
       }
 
-      return { success: false, canceled: true, path: null };
+      return successResponse({ path: null, canceled: true });
     } catch (error) {
-      return { success: false, error: error.message, path: null };
+      return errorResponse(error, { path: null, canceled: true });
     }
   });
 
@@ -259,12 +258,12 @@ function registerFileHandlers() {
       });
 
       if (!result.canceled && result.filePath) {
-        return { success: true, filePath: result.filePath };
+        return successResponse({ filePath: result.filePath, canceled: false });
       }
 
-      return { success: false, canceled: true, filePath: null };
+      return successResponse({ filePath: null, canceled: true });
     } catch (error) {
-      return { success: false, error: error.message, filePath: null };
+      return errorResponse(error, { filePath: null, canceled: true });
     }
   });
 }

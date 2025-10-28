@@ -9,6 +9,7 @@ import { showToast } from '../../components/toast.js';
 import { showConfirm } from '../../components/confirm.js';
 import { handleError, withErrorHandling } from '../../utils/error-handler.js';
 import { openPipelineEditor } from './editor.js';
+import { extractData } from '../../utils/ipc-handler.js';
 
 /**
  * Initialize pipeline view
@@ -61,7 +62,8 @@ function setupEventListeners() {
 async function loadPipelines() {
   const result = await withErrorHandling(
     async () => {
-      const settings = await window.electronAPI.getSettings();
+      const response = await window.electronAPI.getSettings();
+      const settings = extractData(response, 'settings');
       const directory = settings.pipelineConfigPath || settings.etlBackendPath;
 
       if (!directory) {
@@ -186,7 +188,8 @@ async function handlePipelineActions(e) {
  * Create new pipeline
  */
 async function createNewPipeline() {
-  const settings = await window.electronAPI.getSettings();
+  const response = await window.electronAPI.getSettings();
+  const settings = extractData(response, 'settings');
   let directory = settings.pipelineConfigPath || settings.etlBackendPath;
 
   if (!directory) {
@@ -533,7 +536,8 @@ async function duplicatePipeline(path) {
 
   if (!result || !result.success) return;
 
-  const settings = await window.electronAPI.getSettings();
+  const response = await window.electronAPI.getSettings();
+  const settings = extractData(response, 'settings');
   let directory = settings.pipelineConfigPath || settings.etlBackendPath;
 
   if (!directory) {

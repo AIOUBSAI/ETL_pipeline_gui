@@ -6,6 +6,7 @@ const { sendToRenderer } = require('../window');
 const { getSettings } = require('../utils/settings');
 const { sendNotification } = require('./notifications');
 const { ProcessOutputParser } = require('../utils/process-parser');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 // Store running processes
 const runningProcesses = new Map();
@@ -19,15 +20,19 @@ const processStartTimes = new Map();
 function registerProjectHandlers() {
   // Select root folder
   ipcMain.handle('select-root-folder', async () => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openDirectory'],
-      title: 'Select Root Projects Folder'
-    });
+    try {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+        title: 'Select Root Projects Folder'
+      });
 
-    if (!result.canceled && result.filePaths.length > 0) {
-      return result.filePaths[0];
+      if (!result.canceled && result.filePaths.length > 0) {
+        return successResponse({ path: result.filePaths[0] });
+      }
+      return successResponse({ path: null });
+    } catch (error) {
+      return errorResponse(error, { path: null });
     }
-    return null;
   });
 
   // Scan for project folders
@@ -47,9 +52,9 @@ function registerProjectHandlers() {
         }))
         .sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
 
-      return projects;
+      return successResponse({ projects });
     } catch (error) {
-      throw error;
+      return errorResponse(error, { projects: [] });
     }
   });
 
@@ -64,7 +69,7 @@ function registerProjectHandlers() {
         sendToRenderer('log-message',
           ProcessOutputParser.createLogEntry(errorMsg, 'error')
         );
-        reject({ success: false, error: errorMsg });
+        reject(errorResponse(errorMsg, { output: '', code: null }));
         return;
       }
 
@@ -146,9 +151,9 @@ function registerProjectHandlers() {
         });
 
         if (code === 0) {
-          resolve({ success: true, output, code });
+          resolve(successResponse({ output, code }));
         } else {
-          reject({ success: false, error: errorOutput, code });
+          reject(errorResponse(errorOutput || `Process exited with code ${code}`, { output: '', code }));
         }
       });
 
@@ -161,20 +166,20 @@ function registerProjectHandlers() {
             'error'
           )
         );
-        reject({ success: false, error: error.message });
+        reject(errorResponse(error, { output: '', code: null }));
       });
     });
   });
 
   // Stop/kill a running project
   ipcMain.handle('stop-project', async (event, projectName) => {
-    const process = runningProcesses.get(projectName);
-
-    if (!process) {
-      return { success: false, error: 'Process not found' };
-    }
-
     try {
+      const process = runningProcesses.get(projectName);
+
+      if (!process) {
+        throw new Error('Process not found');
+      }
+
       process.kill('SIGTERM');
       runningProcesses.delete(projectName);
       processStartTimes.delete(projectName);
@@ -191,9 +196,9 @@ function registerProjectHandlers() {
         projectName
       });
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 }

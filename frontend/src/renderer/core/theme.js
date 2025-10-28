@@ -3,6 +3,8 @@
  * Manages dynamic theme loading and switching
  */
 
+import { extractData } from '../utils/ipc-handler.js';
+
 export class ThemeLoader {
   constructor() {
     this.currentTheme = null;
@@ -64,7 +66,8 @@ export class ThemeLoader {
 
     // Load custom themes from the backend (stored in userData)
     try {
-      const customThemes = await window.electronAPI.getCustomThemes();
+      const response = await window.electronAPI.getCustomThemes();
+      const customThemes = extractData(response, 'themes');
 
       // Add custom themes to available themes
       // Custom themes are stored with full file path from backend
@@ -102,8 +105,9 @@ export class ThemeLoader {
     // Handle custom themes differently (load content via IPC)
     if (theme.isCustom && theme.file) {
       try {
-        const result = await window.electronAPI.loadCustomThemeContent(theme.file);
-        if (result.success) {
+        const response = await window.electronAPI.loadCustomThemeContent(theme.file);
+        const result = extractData(response);
+        if (result.content) {
           // Inject CSS directly as a style tag
           let customStyleTag = document.getElementById('custom-theme-style');
           if (!customStyleTag) {

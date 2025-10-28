@@ -7,6 +7,7 @@ import { getById, getAll } from '../utils/dom.js';
 import { showToast } from '../components/toast.js';
 import { showConfirm } from '../components/confirm.js';
 import { loadDialog } from '../utils/templateLoader.js';
+import { extractData } from '../utils/ipc-handler.js';
 
 let customThemes = [];
 let themeLoaderInstance = null;
@@ -73,7 +74,7 @@ function initializeThemePlugins() {
   if (selectThemeFileBtn) {
     selectThemeFileBtn.addEventListener('click', async () => {
       try {
-        const filePath = await window.electronAPI.selectFile({
+        const response = await window.electronAPI.selectFile({
           title: 'Select Theme File',
           filters: [
             { name: 'CSS Files', extensions: ['css'] },
@@ -81,11 +82,13 @@ function initializeThemePlugins() {
           ]
         });
 
+        const filePath = extractData(response, 'filePath');
         if (filePath) {
           themeFilePathInput.value = filePath;
           importThemeBtn.disabled = false;
         }
       } catch (error) {
+        console.error('Error selecting theme file:', error);
       }
     });
   }
@@ -161,9 +164,12 @@ function initializeThemePlugins() {
  */
 async function loadCustomThemes() {
   try {
-    customThemes = await window.electronAPI.getCustomThemes();
+    const response = await window.electronAPI.getCustomThemes();
+    customThemes = extractData(response, 'themes');
     renderCustomThemesList();
   } catch (error) {
+    console.error('Error loading custom themes:', error);
+    customThemes = [];
   }
 }
 

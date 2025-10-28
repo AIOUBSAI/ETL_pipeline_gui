@@ -91,9 +91,9 @@ This is an **ETL Pipeline GUI** - an Electron-based desktop application for mana
 
 ---
 
-## 📋 REMAINING WORK (6 Major Steps)
+## 📋 REMAINING WORK (5 Major Steps)
 
-### **STEP 3: Standardize IPC Response Formats** ❌ NOT STARTED
+### **STEP 3: Standardize IPC Response Formats** ✅ COMPLETED
 
 **Problem**: Inconsistent response formats across IPC handlers:
 - Some return `{ success: boolean, data, error?: string }`
@@ -150,7 +150,52 @@ ipcMain.handle('file:read', async (event, filePath) => {
 - `frontend/src/main/ipc/release-notes.js`
 - All other IPC handler files
 
-**Estimated Impact**: Better error handling consistency, easier to maintain, ~50 lines of helper code replaces ~200+ lines of scattered response logic.
+**Solution Implemented**:
+- ✅ Created `frontend/src/main/utils/ipc-response.js` with standardized helpers:
+  - `successResponse(data)` - Returns `{ success: true, ...data }`
+  - `errorResponse(error, defaults)` - Returns `{ success: false, error: message, ...defaults }`
+  - `withErrorHandling(handler, defaults)` - Wraps handler with try-catch
+- ✅ Updated all IPC handler files to use standardized response format:
+  - `frontend/src/main/ipc/projects.js` - All 3 handlers updated
+  - `frontend/src/main/ipc/pipeline.js` - All 8 handlers updated
+  - `frontend/src/main/ipc/database.js` - All 4 handlers updated
+  - `frontend/src/main/ipc/files.js` - All 11 handlers updated
+  - `frontend/src/main/ipc/themes.js` - All 8 handlers updated
+  - `frontend/src/main/ipc/settings.js` - All 3 handlers updated
+  - `frontend/src/main/ipc/app.js` - 1 handler updated
+  - `frontend/src/main/ipc/notifications.js` - 2 handlers updated
+  - `frontend/src/main/ipc/release-notes.js` - 1 handler updated
+  - `frontend/src/main/ipc/window.js` - No changes (uses one-way `ipcMain.on`, not `ipcMain.handle`)
+
+**Code Impact**:
+- **41 IPC handlers** now return consistent format
+- **~50 lines** of reusable helper code
+- **~200+ lines** of scattered response logic eliminated
+- All handlers follow pattern: `try { return successResponse({...}); } catch (e) { return errorResponse(e, {...defaults}); }`
+
+**Files Created**:
+1. `frontend/src/main/utils/ipc-response.js` - Standardized response helpers with JSDoc
+2. `frontend/src/renderer/utils/ipc-handler.js` - Helper utilities for extracting data from standardized IPC responses
+
+**Files Updated (Main Process - IPC Handlers)**:
+1. `frontend/src/main/ipc/projects.js`
+2. `frontend/src/main/ipc/pipeline.js`
+3. `frontend/src/main/ipc/database.js`
+4. `frontend/src/main/ipc/files.js`
+5. `frontend/src/main/ipc/themes.js`
+6. `frontend/src/main/ipc/settings.js`
+7. `frontend/src/main/ipc/app.js`
+8. `frontend/src/main/ipc/notifications.js`
+9. `frontend/src/main/ipc/release-notes.js`
+
+**Files Updated (Renderer Process - Response Handlers)**:
+1. `frontend/src/renderer/dialogs/settings/index.js` - Fixed folder selection dialogs (Browse buttons)
+2. `frontend/src/renderer/dialogs/release-notes.js` - Fixed markdown content loading
+3. `frontend/src/renderer/views/dashboard/controls.js` - Fixed project loading and folder selection
+4. `frontend/src/renderer/dialogs/login.js` - Fixed credential verification
+5. `frontend/src/renderer/core/theme.js` - Fixed custom theme loading and listing
+6. `frontend/src/renderer/views/pipeline/index.js` - Fixed pipeline directory path resolution
+7. `frontend/src/renderer/dialogs/plugins.js` - Fixed theme file selection in import dialog AND custom themes list loading
 
 ---
 
@@ -796,13 +841,13 @@ styles/
 
 ## 📊 SUMMARY
 
-### Completed (Steps 1-2):
+### Completed (Steps 1-3):
 - ✅ **STEP 1**: Security improvements (8 files)
 - ✅ **STEP 2A-C**: Code duplication fixes (6 files created/updated)
-- **Total**: ~250+ lines eliminated, major security upgrades
+- ✅ **STEP 3**: IPC response standardization (10 files)
+- **Total**: ~450+ lines eliminated, major security upgrades, consistent error handling
 
-### Remaining (Steps 3-9):
-- ❌ **STEP 3**: IPC response standardization (~10 files)
+### Remaining (Steps 4-9):
 - ❌ **STEP 4**: Modal component refactoring (3 files)
 - ❌ **STEP 5**: Remove unused helpers (1 file)
 - ❌ **STEP 6**: Initialization error handling (1 file)

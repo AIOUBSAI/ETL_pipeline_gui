@@ -6,6 +6,7 @@
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Get custom themes directory path (in userData/custom-themes folder)
@@ -168,12 +169,20 @@ function detectThemeCategory(content) {
 function registerThemeHandlers() {
   // Select theme file
   ipcMain.handle('select-file', async (event, options) => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      ...options
-    });
+    try {
+      const result = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        ...options
+      });
 
-    return result.canceled ? null : result.filePaths[0];
+      if (result.canceled) {
+        return successResponse({ filePath: null, canceled: true });
+      }
+
+      return successResponse({ filePath: result.filePaths[0], canceled: false });
+    } catch (error) {
+      return errorResponse(error, { filePath: null, canceled: true });
+    }
   });
 
   // Import custom theme
@@ -187,7 +196,7 @@ function registerThemeHandlers() {
       // Validate theme
       const validation = validateThemeFile(content);
       if (!validation.valid) {
-        return { success: false, error: validation.error };
+        throw new Error(validation.error);
       }
 
       // Parse metadata
@@ -210,8 +219,12 @@ function registerThemeHandlers() {
       // Check if theme already exists
       try {
         await fs.access(destPath);
-        return { success: false, error: `Theme "${metadata.name}" already exists. Please rename it or delete the existing one first.` };
-      } catch {
+        throw new Error(`Theme "${metadata.name}" already exists. Please rename it or delete the existing one first.`);
+      } catch (error) {
+        // If it's not an ENOENT error, rethrow it
+        if (error.code !== 'ENOENT' && !error.message.includes('already exists')) {
+          throw error;
+        }
         // File doesn't exist, proceed
       }
 
@@ -224,14 +237,13 @@ function registerThemeHandlers() {
       // Write theme file
       await fs.writeFile(destPath, updatedContent || content);
 
-      return {
-        success: true,
+      return successResponse({
         themeId,
         themeName: metadata.name,
         category: detectedCategory
-      };
+      });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -274,9 +286,9 @@ function registerThemeHandlers() {
         })
       );
 
-      return themes.filter(Boolean);
+      return successResponse({ themes: themes.filter(Boolean) });
     } catch (error) {
-      return [];
+      return errorResponse(error, { themes: [] });
     }
   });
 
@@ -289,9 +301,9 @@ function registerThemeHandlers() {
       // Check if theme exists
       await fs.access(themePath);
 
-      return { success: true, themeId };
+      return successResponse({ themeId });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -304,9 +316,9 @@ function registerThemeHandlers() {
       // Delete CSS file only (no more JSON metadata files)
       await fs.unlink(cssPath);
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -325,8 +337,12 @@ function registerThemeHandlers() {
       // Check if theme already exists
       try {
         await fs.access(destPath);
-        return { success: false, error: `Theme "${themeName}" already exists. Please choose a different name.` };
-      } catch {
+        throw new Error(`Theme "${themeName}" already exists. Please choose a different name.`);
+      } catch (error) {
+        // If it's not an ENOENT error, rethrow it
+        if (error.code !== 'ENOENT' && !error.message.includes('already exists')) {
+          throw error;
+        }
         // File doesn't exist, proceed
       }
 
@@ -349,14 +365,13 @@ function registerThemeHandlers() {
       // Write theme file
       await fs.writeFile(destPath, updatedContent || cssContent);
 
-      return {
-        success: true,
+      return successResponse({
         themeId,
         themeName,
         category: finalCategory
-      };
+      });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -372,7 +387,7 @@ function registerThemeHandlers() {
       });
 
       if (result.canceled) {
-        return { success: false, error: 'Cancelled' };
+        return successResponse({ path: null, canceled: true });
       }
 
       // Read template from project root
@@ -382,9 +397,9 @@ function registerThemeHandlers() {
       // Write to user-selected location
       await fs.writeFile(result.filePath, templateContent);
 
-      return { success: true, path: result.filePath };
+      return successResponse({ path: result.filePath, canceled: false });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { path: null, canceled: true });
     }
   });
 
@@ -392,9 +407,9 @@ function registerThemeHandlers() {
   ipcMain.handle('load-custom-theme-content', async (_event, filePath) => {
     try {
       const content = await fs.readFile(filePath, 'utf-8');
-      return { success: true, content };
+      return successResponse({ content });
     } catch (error) {
-      return { success: false, error: error.message };
+      return errorResponse(error, { content: '' });
     }
   });
 }

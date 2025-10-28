@@ -1,5 +1,6 @@
 const { ipcMain, Notification } = require('electron');
 const { sendToRenderer } = require('../window');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Register notification IPC handlers
@@ -14,10 +15,10 @@ function registerNotificationHandlers() {
       // Forward to renderer for display
       sendToRenderer('notification', notificationData);
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
       console.error('Error sending notification:', error);
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 
@@ -36,10 +37,10 @@ function registerNotificationHandlers() {
         win.focus();
       }
 
-      return { success: true };
+      return successResponse();
     } catch (error) {
       console.error('Error focusing window:', error);
-      return { success: false, error: error.message };
+      return errorResponse(error);
     }
   });
 }

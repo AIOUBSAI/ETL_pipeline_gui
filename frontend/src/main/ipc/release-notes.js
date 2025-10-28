@@ -6,6 +6,7 @@
 const { ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const { successResponse, errorResponse } = require('../utils/ipc-response');
 
 /**
  * Register release notes IPC handlers
@@ -23,10 +24,10 @@ function registerReleaseNotesHandlers() {
       }
 
       const content = fs.readFileSync(releaseNotesPath, 'utf-8');
-      return content;
+      return successResponse({ content });
     } catch (error) {
       console.error('Error reading release notes:', error);
-      throw error;
+      return errorResponse(error, { content: '' });
     }
   });
 }

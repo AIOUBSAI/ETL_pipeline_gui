@@ -5,6 +5,7 @@
 
 import { getById } from '../utils/dom.js';
 import { loadDialog } from '../utils/templateLoader.js';
+import { extractData } from '../utils/ipc-handler.js';
 
 // Load marked and mermaid from CDN
 let marked = null;
@@ -90,7 +91,8 @@ async function loadReleaseNotes() {
     await loadLibraries();
 
     // Fetch markdown content from main process
-    const markdownContent = await window.electronAPI.readReleaseNotes();
+    const response = await window.electronAPI.readReleaseNotes();
+    const markdownContent = extractData(response, 'content');
 
     // Configure marked options
     marked.setOptions({
