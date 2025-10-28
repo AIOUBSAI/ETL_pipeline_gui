@@ -59,24 +59,3 @@ export function isProtectedView(view) {
   return PROTECTED_VIEWS.includes(view);
 }
 
-/**
- * Check if user has admin privileges
- * @param {string} userRole - Current user role
- * @returns {boolean} True if user is admin
- */
-export function hasAdminPrivileges(userRole) {
-  return userRole === USER_ROLES.ADMIN;
-}
-
-/**
- * Check if user can access a view
- * @param {string} view - View name
- * @param {string} userRole - Current user role
- * @returns {boolean} True if user can access the view
- */
-export function canAccessView(view, userRole) {
-  if (!isProtectedView(view)) {
-    return true; // Public view
-  }
-  return hasAdminPrivileges(userRole);
-}

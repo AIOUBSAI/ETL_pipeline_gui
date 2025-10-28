@@ -26,6 +26,7 @@ import { initializeCommandPalette } from './components/command-palette.js';
 import { initializeKeyboardShortcuts } from './utils/keyboard-shortcuts.js';
 import { notificationManager } from './utils/notifications.js';
 import { soundManager } from './utils/sound-manager.js';
+import { InitializationManager, defineComponent } from './utils/init-manager.js';
 
 let themeLoader = null;
 
@@ -46,78 +47,73 @@ function hideSplashScreen() {
  * Initialize the application
  */
 async function initializeApp() {
-  try {
-    const startTime = Date.now();
+  const initManager = new InitializationManager();
+  const startTime = Date.now();
 
-    // Initialize theme system first
-    themeLoader = new ThemeLoader();
-    await themeLoader.init();
+  // Define critical components (app fails if these fail)
+  const criticalComponents = [
+    defineComponent('Theme System', async () => {
+      themeLoader = new ThemeLoader();
+      await themeLoader.init();
+    }, true),
+  ];
 
-    // Initialize UI components
-    initializeTitleBar();
-    initializeSidebarToggle();
-    initializeNavigation(handleViewChange);
-    initializeHelpMenu();
+  // Define optional components (app continues if these fail)
+  const optionalComponents = [
+    defineComponent('Title Bar', () => initializeTitleBar()),
+    defineComponent('Sidebar Toggle', () => initializeSidebarToggle()),
+    defineComponent('Navigation', () => initializeNavigation(handleViewChange)),
+    defineComponent('Help Menu', () => initializeHelpMenu()),
+    defineComponent('Dashboard View', () => initializeDashboard()),
+    defineComponent('Pipeline View', () => initializePipelineView()),
+    defineComponent('Settings Dialog', async () => await initializeSettingsDialog(themeLoader)),
+    defineComponent('Themes Dialog', async () => await initializeThemesDialog(themeLoader)),
+    defineComponent('Plugins Dialog', async () => await initializePluginsDialog(themeLoader)),
+    defineComponent('Login Dialog', async () => await initializeLoginDialog()),
+    defineComponent('Simple Dialogs', async () => await initializeSimpleDialogs()),
+    defineComponent('Release Notes Dialog', async () => await initializeReleaseNotesDialog()),
+    defineComponent('Keyboard Shortcuts Dialog', async () => await initializeKeyboardShortcutsDialog()),
+    defineComponent('Command Palette', async () => await initializeCommandPalette()),
+    defineComponent('Keyboard Shortcuts', () => initializeKeyboardShortcuts()),
+    defineComponent('Dialog Close Buttons', () => initializeDialogs()),
+    defineComponent('Notification Manager', async () => await notificationManager.init()),
+    defineComponent('Sound Manager', async () => await soundManager.init()),
+    defineComponent('Admin Session Check', () => checkAdminSession()),
+    defineComponent('Dropdown Menu', () => initializeDropdownMenu()),
+    defineComponent('Icons', () => initializeIcons()),
+    defineComponent('Version Display', async () => await initializeVersionDisplay()),
+    defineComponent('Settings Loader', async () => await loadSettings()),
+    defineComponent('Project Loader', async () => await loadProjects()),
+  ];
 
-    // Initialize views
-    initializeDashboard();
-    initializePipelineView();
+  // Initialize critical components first
+  const criticalSuccess = await initManager.initializeComponents(criticalComponents, {
+    stopOnCriticalFailure: true,
+  });
 
-    // Initialize dialogs with theme loader (now async with template loading)
-    await initializeSettingsDialog(themeLoader);
-    await initializeThemesDialog(themeLoader);
-    await initializePluginsDialog(themeLoader);
-    await initializeLoginDialog();
-    await initializeSimpleDialogs();
-    await initializeReleaseNotesDialog();
-    await initializeKeyboardShortcutsDialog();
-
-    // Initialize command palette
-    await initializeCommandPalette();
-
-    // Initialize global keyboard shortcuts
-    initializeKeyboardShortcuts();
-
-    // Initialize dialog close buttons AFTER templates are loaded
-    initializeDialogs();
-
-    // Initialize notification and sound managers
-    await notificationManager.init();
-    await soundManager.init();
-
-    // Check for existing admin session BEFORE initializing dropdown menu
-    // This ensures the state is set before updateAdminStatus() is called
-    checkAdminSession();
-
-    // Initialize dropdown menu after session check
-    initializeDropdownMenu();
-
-    // Initialize all icons in the document (after dialogs are loaded)
-    initializeIcons();
-
-    // Initialize version display
-    await initializeVersionDisplay();
-
-    // Load settings on startup
-    await loadSettings();
-
-    // Load projects after settings are loaded
-    await loadProjects();
-
-    // Calculate elapsed time and ensure minimum splash screen duration
-    const elapsed = Date.now() - startTime;
-    const minSplashDuration = 1000; // 1 second minimum
-    const remainingTime = Math.max(0, minSplashDuration - elapsed);
-
-    // Hide splash screen after minimum duration
-    setTimeout(() => {
-      hideSplashScreen();
-    }, remainingTime);
-
-  } catch (error) {
-    // Hide splash screen even on error
-    setTimeout(() => hideSplashScreen(), 1000);
+  // If critical components failed, don't continue
+  if (!criticalSuccess) {
+    console.error('Critical component initialization failed. App cannot start.');
+    return;
   }
+
+  // Initialize optional components (don't stop on failures)
+  await initManager.initializeComponents(optionalComponents, {
+    stopOnCriticalFailure: false,
+  });
+
+  // Log initialization summary
+  initManager.logSummary();
+
+  // Calculate elapsed time and ensure minimum splash screen duration
+  const elapsed = Date.now() - startTime;
+  const minSplashDuration = 1000; // 1 second minimum
+  const remainingTime = Math.max(0, minSplashDuration - elapsed);
+
+  // Hide splash screen after minimum duration
+  setTimeout(() => {
+    hideSplashScreen();
+  }, remainingTime);
 }
 
 /**

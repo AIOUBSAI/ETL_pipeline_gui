@@ -95,30 +95,6 @@ if (isProtectedView('editor')) {
 }
 ```
 
-### `hasAdminPrivileges(userRole)`
-
-Check if user has admin privileges:
-
-```javascript
-import { hasAdminPrivileges } from '../core/auth-config.js';
-
-if (hasAdminPrivileges(currentUser)) {
-  // User is admin
-}
-```
-
-### `canAccessView(view, userRole)`
-
-Check if user can access a specific view:
-
-```javascript
-import { canAccessView } from '../core/auth-config.js';
-
-if (canAccessView('editor', currentUser)) {
-  // User can access this view
-}
-```
-
 ## Events
 
 The system emits custom events for coordination:
