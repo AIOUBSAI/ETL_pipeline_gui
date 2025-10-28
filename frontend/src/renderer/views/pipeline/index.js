@@ -12,11 +12,35 @@ import { openPipelineEditor } from './editor.js';
 import { extractData } from '../../utils/ipc-handler.js';
 
 /**
- * Initialize pipeline view
+ * Initialize pipeline view (wrapped with error boundary)
  */
 export async function initializePipelineView() {
-  setupEventListeners();
-  await loadPipelines();
+  try {
+    setupEventListeners();
+    await loadPipelines();
+  } catch (error) {
+    console.error('Pipeline Builder initialization failed:', error);
+
+    // Display error UI
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'error-boundary-component';
+    errorContainer.innerHTML = `
+      <div class="error-boundary-icon">⚠️</div>
+      <h3 class="error-boundary-title">Pipeline Builder Failed to Load</h3>
+      <p class="error-boundary-message">${error.message}</p>
+      <div class="error-boundary-actions">
+        <button class="error-boundary-btn" onclick="location.reload()">Reload Application</button>
+      </div>
+    `;
+
+    const targetElement = document.getElementById('pipeline-view');
+    if (targetElement) {
+      targetElement.appendChild(errorContainer);
+    }
+
+    // Custom recovery logic
+    setState('pipelineViewAvailable', false);
+  }
 }
 
 let listenersAttached = false;
@@ -162,11 +186,8 @@ async function handlePipelineActions(e) {
   const action = button.dataset.action;
   const path = button.dataset.path;
 
-  console.log('Pipeline action:', action, 'Path:', path);
-
   switch (action) {
     case 'edit':
-      console.log('Editing pipeline:', path);
       await editPipeline(path);
       break;
     case 'validate':
@@ -251,20 +272,13 @@ jobs: {}
  * Edit pipeline
  */
 async function editPipeline(path) {
-  console.log('editPipeline called with path:', path);
-
   const result = await withErrorHandling(
     async () => await window.electronAPI.pipeline.read(path),
     'Load Pipeline'
   );
 
-  console.log('Read result:', result);
-
   if (result && result.success) {
-    console.log('Opening editor with content length:', result.content?.length);
     openPipelineEditor(path, result.content);
-  } else {
-    console.error('Failed to read pipeline:', result);
   }
 }
 

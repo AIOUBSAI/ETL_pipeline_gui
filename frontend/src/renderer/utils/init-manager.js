@@ -48,16 +48,16 @@ export class InitializationManager {
       await component.init();
       result.success = true;
       result.duration = Date.now() - startTime;
-      console.log(`✓ ${component.name} initialized (${result.duration}ms)`);
+      // Success logging removed - only log failures
     } catch (error) {
       result.success = false;
       result.duration = Date.now() - startTime;
       result.error = error;
 
       if (component.critical) {
-        console.error(`✗ Critical: ${component.name} failed`, error);
+        console.error(`Critical component failed: ${component.name}`, error);
       } else {
-        console.warn(`⚠ ${component.name} failed, continuing anyway`, error);
+        console.warn(`Component failed (non-critical): ${component.name}`, error);
       }
     }
 
@@ -115,22 +115,24 @@ export class InitializationManager {
    */
   logSummary() {
     const summary = this.getSummary();
-    console.log('\n=== Initialization Summary ===');
-    console.log(`Total components: ${summary.total}`);
-    console.log(`Successful: ${summary.successful}`);
-    console.log(`Failed: ${summary.failed}`);
-    console.log(`Total time: ${summary.totalDuration}ms`);
 
+    // Only log if there were failures
     if (summary.failed > 0) {
+      console.log('\n=== Initialization Summary ===');
+      console.log(`Total components: ${summary.total}`);
+      console.log(`Successful: ${summary.successful}`);
+      console.log(`Failed: ${summary.failed}`);
+      console.log(`Total time: ${summary.totalDuration}ms`);
+
       console.log('\nFailed components:');
       this.results
         .filter(r => !r.success)
         .forEach(r => {
           console.log(`  - ${r.name}: ${r.error?.message || 'Unknown error'}`);
         });
-    }
 
-    console.log('==============================\n');
+      console.log('==============================\n');
+    }
   }
 
   /**
@@ -140,25 +142,29 @@ export class InitializationManager {
    */
   showFatalError(componentName, error) {
     const errorContainer = document.createElement('div');
-    errorContainer.className = 'fatal-error-container';
+    errorContainer.className = 'error-boundary-critical-overlay';
     errorContainer.innerHTML = `
-      <div class="fatal-error-content">
-        <div class="error-icon">⚠️</div>
-        <h2>Critical Error</h2>
-        <p><strong>${componentName}</strong> failed to initialize</p>
-        <p class="error-message">${error?.message || 'Unknown error'}</p>
-        <button class="btn-primary" onclick="location.reload()">Reload Application</button>
-        <details style="margin-top: 20px;">
-          <summary>Technical Details</summary>
-          <pre style="text-align: left; overflow: auto; max-height: 200px;">${error?.stack || 'No stack trace available'}</pre>
-        </details>
+      <div class="error-boundary-critical-content">
+        <div class="error-boundary-critical-icon">🚨</div>
+        <h1 class="error-boundary-critical-title">Critical Error</h1>
+        <h2 class="error-boundary-critical-subtitle">${componentName} Failed to Initialize</h2>
+        <p class="error-boundary-critical-message">A critical component failed to load. The application cannot continue.</p>
+        <div class="error-boundary-critical-details">
+          <strong>Error:</strong> ${error?.message || 'Unknown error'}
+        </div>
+        <div class="error-boundary-critical-actions">
+          <button class="error-boundary-critical-btn" onclick="location.reload()">Reload Application</button>
+        </div>
+        <div class="error-boundary-critical-footer">
+          If this problem persists, please check the application logs or contact support.
+        </div>
       </div>
     `;
 
     // Add styles inline to ensure they work even if CSS failed to load
     const style = document.createElement('style');
     style.textContent = `
-      .fatal-error-container {
+      .error-boundary-critical-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -172,56 +178,62 @@ export class InitializationManager {
         color: #fff;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       }
-      .fatal-error-content {
+      .error-boundary-critical-content {
         text-align: center;
         max-width: 600px;
         padding: 40px;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 12px;
       }
-      .error-icon {
+      .error-boundary-critical-icon {
         font-size: 64px;
         margin-bottom: 20px;
       }
-      .fatal-error-content h2 {
+      .error-boundary-critical-title {
         margin: 0 0 10px 0;
-        font-size: 24px;
+        font-size: 32px;
+        color: #f38ba8;
+        font-weight: 700;
       }
-      .fatal-error-content p {
+      .error-boundary-critical-subtitle {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .error-boundary-critical-message {
         margin: 10px 0;
+        font-size: 14px;
       }
-      .error-message {
-        color: #ff6b6b;
+      .error-boundary-critical-details {
+        color: #f38ba8;
         font-family: 'Courier New', monospace;
-        background: rgba(255, 107, 107, 0.1);
-        padding: 10px;
-        border-radius: 4px;
-      }
-      .fatal-error-content .btn-primary {
-        margin-top: 20px;
-        padding: 12px 24px;
-        font-size: 16px;
-        background: #4a9eff;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-      }
-      .fatal-error-content .btn-primary:hover {
-        background: #357abd;
-      }
-      .fatal-error-content details {
+        background: rgba(243, 139, 168, 0.1);
+        padding: 16px;
+        border-radius: 8px;
+        border-left: 4px solid #f38ba8;
+        margin: 20px 0;
         text-align: left;
       }
-      .fatal-error-content summary {
-        cursor: pointer;
-        color: #4a9eff;
+      .error-boundary-critical-actions {
+        margin: 20px 0;
       }
-      .fatal-error-content pre {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 10px;
-        border-radius: 4px;
+      .error-boundary-critical-btn {
+        padding: 14px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        background: #f38ba8;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .error-boundary-critical-btn:hover {
+        filter: brightness(1.2);
+      }
+      .error-boundary-critical-footer {
+        margin-top: 20px;
         font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
       }
     `;
 
@@ -237,12 +249,15 @@ export class InitializationManager {
    */
   showComponentError(componentName, error, targetViewId = null) {
     const errorElement = document.createElement('div');
-    errorElement.className = 'component-error';
+    errorElement.className = 'error-boundary-component';
     errorElement.innerHTML = `
-      <div class="component-error-icon">⚠️</div>
-      <h3>${componentName} failed to load</h3>
-      <p>${error?.message || 'Unknown error'}</p>
-      <button class="btn-secondary" onclick="location.reload()">Reload App</button>
+      <div class="error-boundary-icon">⚠️</div>
+      <h3 class="error-boundary-title">${componentName} Failed to Load</h3>
+      <p class="error-boundary-message">${error?.message || 'Unknown error'}</p>
+      <div class="error-boundary-actions">
+        <button class="error-boundary-btn" onclick="location.reload()">Reload Application</button>
+        <button class="error-boundary-btn error-boundary-btn-secondary" onclick="this.parentElement.parentElement.remove()">Dismiss</button>
+      </div>
     `;
 
     // Try to find the target view

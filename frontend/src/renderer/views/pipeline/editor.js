@@ -17,22 +17,13 @@ let isDirty = false;
  * Open pipeline editor
  */
 export function openPipelineEditor(path, yamlContent) {
-  console.log('openPipelineEditor called', { path, contentLength: yamlContent?.length });
-
   currentPipelinePath = path;
   isDirty = false;
 
   try {
-    // Parse YAML
-    console.log('Parsing YAML...');
     currentConfig = parseYAML(yamlContent);
-    console.log('Parsed config:', currentConfig);
-
-    console.log('Showing dialog...');
     showEditorDialog();
-    console.log('Rendering content...');
     renderEditorContent();
-    console.log('Editor opened successfully');
   } catch (error) {
     console.error('Error opening editor:', error);
     handleError(error, 'Parse Pipeline');
@@ -43,19 +34,14 @@ export function openPipelineEditor(path, yamlContent) {
  * Show editor dialog
  */
 function showEditorDialog() {
-  console.log('showEditorDialog called');
-
   const existingDialog = document.getElementById('pipeline-editor-dialog');
   if (existingDialog) {
-    console.log('Removing existing dialog');
     existingDialog.remove();
   }
 
-  console.log('Creating dialog element');
   const wrapper = document.createElement('div');
   wrapper.id = 'pipeline-editor-dialog';
   wrapper.className = 'pipeline-editor-dialog';
-  console.log('Setting dialog HTML');
   wrapper.innerHTML = `
     <div class="dialog-overlay">
       <div class="dialog pipeline-editor-content">
@@ -106,13 +92,10 @@ function showEditorDialog() {
     </div>
   `;
 
-  console.log('Appending wrapper to body');
   document.body.appendChild(wrapper);
-  console.log('Wrapper appended, initializing icons');
   initializeIcons(wrapper);
 
   // Event listeners
-  console.log('Adding event listeners');
   document.getElementById('pipeline-close-btn').addEventListener('click', closePipelineEditor);
   document.getElementById('pipeline-save-btn').addEventListener('click', savePipeline);
   document.getElementById('pipeline-validate-btn').addEventListener('click', validateCurrentPipeline);
@@ -127,14 +110,10 @@ function showEditorDialog() {
   });
 
   // Show dialog by adding active class to overlay
-  console.log('Setting active class on overlay after delay');
   setTimeout(() => {
     const overlay = wrapper.querySelector('.dialog-overlay');
     if (overlay) {
       overlay.classList.add('active');
-      console.log('Overlay active class added');
-    } else {
-      console.error('Could not find dialog-overlay!');
     }
   }, 10);
 }

@@ -65,7 +65,7 @@ async function initializeApp() {
     defineComponent('Navigation', () => initializeNavigation(handleViewChange)),
     defineComponent('Help Menu', () => initializeHelpMenu()),
     defineComponent('Dashboard View', () => initializeDashboard()),
-    defineComponent('Pipeline View', () => initializePipelineView()),
+    defineComponent('Pipeline View', async () => await initializePipelineView()),
     defineComponent('Settings Dialog', async () => await initializeSettingsDialog(themeLoader)),
     defineComponent('Themes Dialog', async () => await initializeThemesDialog(themeLoader)),
     defineComponent('Plugins Dialog', async () => await initializePluginsDialog(themeLoader)),

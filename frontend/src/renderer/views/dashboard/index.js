@@ -9,23 +9,47 @@ import { initializeControls, updateButtonStates, loadProjects } from './controls
 import { initializeLogs, addLog } from './logs.js';
 
 /**
- * Initialize dashboard view
+ * Initialize dashboard view (wrapped with error boundary)
  */
 export function initializeDashboard() {
-  // Initialize controls with callbacks
-  initializeControls({
-    onRun: runProject,
-    onStop: stopProject,
-    onReload: loadProjects
-  });
+  try {
+    // Initialize controls with callbacks
+    initializeControls({
+      onRun: runProject,
+      onStop: stopProject,
+      onReload: loadProjects
+    });
 
-  // Initialize logs panel
-  initializeLogs();
+    // Initialize logs panel
+    initializeLogs();
 
-  // Set up log listener
-  window.electronAPI.onLogMessage((log) => {
-    addLog(log);
-  });
+    // Set up log listener
+    window.electronAPI.onLogMessage((log) => {
+      addLog(log);
+    });
+  } catch (error) {
+    console.error('Dashboard initialization failed:', error);
+
+    // Display error UI
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'error-boundary-component';
+    errorContainer.innerHTML = `
+      <div class="error-boundary-icon">⚠️</div>
+      <h3 class="error-boundary-title">Dashboard Failed to Load</h3>
+      <p class="error-boundary-message">${error.message}</p>
+      <div class="error-boundary-actions">
+        <button class="error-boundary-btn" onclick="location.reload()">Reload Application</button>
+      </div>
+    `;
+
+    const targetElement = document.getElementById('dashboard-view');
+    if (targetElement) {
+      targetElement.appendChild(errorContainer);
+    }
+
+    // Custom recovery logic
+    setState('dashboardAvailable', false);
+  }
 }
 
 /**
