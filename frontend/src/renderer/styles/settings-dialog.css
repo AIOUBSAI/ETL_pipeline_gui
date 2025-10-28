@@ -445,6 +445,113 @@
   box-shadow: 0 0 0 2px var(--ctp-mauve-15);
 }
 
+/* Volume Slider Styles */
+.settings-slider-group {
+  width: 77%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Custom range slider */
+.settings-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  flex: 1;
+}
+
+.settings-slider:hover {
+  background: var(--ctp-surface1);
+  border-color: var(--ctp-surface2);
+}
+
+.settings-slider:focus {
+  box-shadow: 0 0 0 3px var(--ctp-mauve-15);
+  border-color: var(--ctp-mauve);
+}
+
+/* Webkit (Chrome, Safari, Edge) thumb */
+.settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--ctp-mauve);
+  border: 2px solid var(--ctp-base);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px var(--ctp-black-30);
+}
+
+.settings-slider::-webkit-slider-thumb:hover {
+  background: var(--ctp-lavender);
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px var(--ctp-black-40);
+}
+
+.settings-slider::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px var(--ctp-black-30);
+}
+
+/* Firefox thumb */
+.settings-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--ctp-mauve);
+  border: 2px solid var(--ctp-base);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px var(--ctp-black-30);
+}
+
+.settings-slider::-moz-range-thumb:hover {
+  background: var(--ctp-lavender);
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px var(--ctp-black-40);
+}
+
+.settings-slider::-moz-range-thumb:active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px var(--ctp-black-30);
+}
+
+/* Firefox track */
+.settings-slider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  background: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 4px;
+}
+
+/* Volume value display */
+.settings-slider-value {
+  min-width: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ctp-text);
+  text-align: right;
+  flex-shrink: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .settings-dialog {
