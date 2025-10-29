@@ -6,28 +6,60 @@
 import { getById } from '../utils/dom.js';
 import { loadDialog } from '../utils/templateLoader.js';
 import { extractData } from '../utils/ipc-handler.js';
-import { marked } from '../../node_modules/marked/lib/marked.esm.js';
-import mermaid from '../../node_modules/mermaid/dist/mermaid.esm.min.mjs';
 
 /**
- * Initialize libraries
+ * Load mermaid library from local file
  */
-function initializeLibraries() {
-  // Configure marked options
-  marked.setOptions({
-    breaks: true,
-    gfm: true,
-    headerIds: true,
-    mangle: false,
-  });
+let mermaidLoaded = false;
+let mermaidLib = null;
 
-  // Initialize mermaid
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'dark',
-    securityLevel: 'loose',
-    fontFamily: 'var(--font-mono, monospace)',
-  });
+async function loadMermaid() {
+  if (mermaidLoaded && mermaidLib) {
+    console.log('Mermaid already loaded, reusing instance');
+    return mermaidLib;
+  }
+
+  console.log('Loading mermaid library from ./lib/mermaid.min.js');
+
+  try {
+    // Load from local lib folder (offline-compatible)
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = './lib/mermaid.min.js';  // Local copy in renderer folder
+      script.onload = () => {
+        console.log('Mermaid script loaded successfully');
+        resolve();
+      };
+      script.onerror = (err) => {
+        console.error('Failed to load mermaid script from ./lib/mermaid.min.js', err);
+        reject(err);
+      };
+      script.async = true;
+      document.head.appendChild(script);
+    });
+
+    mermaidLib = window.mermaid;
+
+    if (!mermaidLib) {
+      throw new Error('Mermaid library loaded but window.mermaid is undefined');
+    }
+
+    console.log('Initializing mermaid...');
+    // Initialize mermaid
+    mermaidLib.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      fontFamily: 'var(--font-mono, monospace)',
+    });
+
+    mermaidLoaded = true;
+    console.log('Mermaid initialized successfully');
+    return mermaidLib;
+  } catch (error) {
+    console.error('Failed to load mermaid library:', error);
+    return null;
+  }
 }
 
 /**
@@ -46,7 +78,7 @@ export async function initializeReleaseNotesDialog() {
 }
 
 /**
- * Load and render release notes
+ * Load and render release notes with mermaid support
  */
 async function loadReleaseNotes() {
   const contentContainer = getById('release-notes-content');
@@ -61,47 +93,44 @@ async function loadReleaseNotes() {
       </div>
     `;
 
-    // Initialize libraries
-    initializeLibraries();
-
-    // Fetch markdown content from main process
+    // Fetch processed HTML from main process (markdown converted)
     const response = await window.electronAPI.readReleaseNotes();
-    const markdownContent = extractData(response, 'content');
-
-    // Convert markdown to HTML
-    let htmlContent = marked.parse(markdownContent);
+    const htmlContent = extractData(response, 'html');
 
     // Render the HTML
     contentContainer.innerHTML = `<div class="markdown-content">${htmlContent}</div>`;
 
-    // Find and render mermaid diagrams
+    // Load mermaid and render diagrams
     const mermaidElements = contentContainer.querySelectorAll('code.language-mermaid');
 
-    for (let i = 0; i < mermaidElements.length; i++) {
-      const element = mermaidElements[i];
-      const code = element.textContent;
+    if (mermaidElements.length > 0) {
+      const mermaid = await loadMermaid();
 
-      try {
-        // Create a unique ID for this diagram
-        const id = `mermaid-diagram-${i}`;
+      if (mermaid) {
+        for (let i = 0; i < mermaidElements.length; i++) {
+          const element = mermaidElements[i];
+          const code = element.textContent;
 
-        // Render the mermaid diagram
-        const { svg } = await mermaid.render(id, code);
+          try {
+            // Create a unique ID for this diagram
+            const id = `mermaid-diagram-${i}`;
 
-        // Replace the code block with the rendered SVG
-        const pre = element.parentElement;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'mermaid-diagram';
-        wrapper.innerHTML = svg;
-        pre.replaceWith(wrapper);
-      } catch (error) {
-        console.error('Mermaid rendering error:', error);
-        element.parentElement.innerHTML = `
-          <div class="mermaid-error">
-            <p>Failed to render diagram</p>
-            <pre>${code}</pre>
-          </div>
-        `;
+            // Render the mermaid diagram
+            const { svg } = await mermaid.render(id, code);
+
+            // Replace the code block with the rendered SVG
+            const pre = element.parentElement;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid-diagram';
+            wrapper.innerHTML = svg;
+            pre.replaceWith(wrapper);
+          } catch (error) {
+            console.error('Mermaid rendering error:', error);
+            // Leave the code block as-is if rendering fails
+          }
+        }
+      } else {
+        console.warn('Mermaid library not available - diagrams shown as code');
       }
     }
 

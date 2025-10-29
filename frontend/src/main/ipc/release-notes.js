@@ -1,19 +1,21 @@
 /**
  * Release Notes IPC Handlers
- * Handles reading release notes markdown file
+ * Handles reading and processing release notes markdown file
  */
 
 const { ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { successResponse, errorResponse } = require('../utils/ipc-response');
+const { marked } = require('marked');
 
 /**
  * Register release notes IPC handlers
  */
 function registerReleaseNotesHandlers() {
   /**
-   * Read release notes markdown file
+   * Read and process release notes markdown file
+   * Returns markdown converted to HTML (mermaid shown as code blocks)
    */
   ipcMain.handle('read-release-notes', async () => {
     try {
@@ -23,11 +25,26 @@ function registerReleaseNotesHandlers() {
         throw new Error('Release notes file not found');
       }
 
-      const content = fs.readFileSync(releaseNotesPath, 'utf-8');
-      return successResponse({ content });
+      const markdown = fs.readFileSync(releaseNotesPath, 'utf-8');
+
+      // Configure marked
+      marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: true,
+        mangle: false,
+      });
+
+      // Convert markdown to HTML in main process
+      const html = marked.parse(markdown);
+
+      return successResponse({
+        markdown,  // Raw markdown for reference
+        html       // Processed HTML (mermaid blocks shown as code)
+      });
     } catch (error) {
       console.error('Error reading release notes:', error);
-      return errorResponse(error, { content: '' });
+      return errorResponse(error, { markdown: '', html: '' });
     }
   });
 }
